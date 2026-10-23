@@ -1,0 +1,3 @@
+ALTER TABLE "Document"
+ADD COLUMN "content" JSONB,
+ADD COLUMN "contentRevision" INTEGER NOT NULL DEFAULT 0;

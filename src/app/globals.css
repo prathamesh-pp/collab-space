@@ -24,3 +24,53 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.document-content {
+  min-height: 55vh;
+  padding: 2rem clamp(1.25rem, 5vw, 4rem);
+  color: #334155;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  outline: none;
+}
+
+.document-content > * + * {
+  margin-top: 1rem;
+}
+
+.document-content h1,
+.document-content h2,
+.document-content h3 {
+  color: #0f172a;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.document-content h1 {
+  font-size: 2rem;
+}
+
+.document-content h2 {
+  font-size: 1.5rem;
+}
+
+.document-content ul,
+.document-content ol {
+  padding-left: 1.5rem;
+}
+
+.document-content ul {
+  list-style: disc;
+}
+
+.document-content ol {
+  list-style: decimal;
+}
+
+.document-content p.is-editor-empty:first-child::before {
+  color: #94a3b8;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WorkspaceRole {
+  OWNER
+  EDITOR
+  COMMENTER
+  VIEWER
+}
+
+model User {
+  id            String                  @id @default(cuid())
+  email         String                  @unique
+  name          String
+  passwordHash  String
+  createdAt     DateTime                @default(now())
+  sessions      Session[]
+  memberships   WorkspaceMember[]
+  createdSpaces Workspace[]
+  comments      Comment[]
+  versions      DocumentVersion[]
+  tickets       CollaborationTicket[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model Workspace {
+  id          String            @id @default(cuid())
+  name        String
+  createdById String
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  createdBy   User              @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  members     WorkspaceMember[]
+  documents   Document[]
+}
+
+model WorkspaceMember {
+  id          String        @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole @default(VIEWER)
+  createdAt   DateTime      @default(now())
+  workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+}
+
+model Document {
+  id          String                 @id @default(cuid())
+  workspaceId String
+  title       String                 @default("Untitled")
+  content     Json?
+  contentRevision Int                @default(0)
+  yState      Bytes?
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  workspace   Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  versions    DocumentVersion[]
+  tickets     CollaborationTicket[]
+
+  @@index([workspaceId, updatedAt])
+}
+
+model Comment {
+  id         String    @id @default(cuid())
+  documentId String
+  userId     String
+  text       String
+  anchor     Json?
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, createdAt])
+}
+
+model DocumentVersion {
+  id         String   @id @default(cuid())
+  documentId String
+  userId     String
+  label      String
+  yState     Bytes
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([documentId, createdAt])
+}
+
+model CollaborationTicket {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  documentId String
+  userId     String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
