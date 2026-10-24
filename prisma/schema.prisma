@@ -29,12 +29,13 @@ model User {
 }
 
 model Session {
-  id        String   @id @default(cuid())
-  tokenHash String   @unique
-  userId    String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                   String                @id @default(cuid())
+  tokenHash            String                @unique
+  userId               String
+  expiresAt            DateTime
+  createdAt            DateTime              @default(now())
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collaborationTickets CollaborationTicket[]
 
   @@index([userId, expiresAt])
 }
@@ -109,14 +110,18 @@ model DocumentVersion {
 }
 
 model CollaborationTicket {
-  id         String   @id @default(cuid())
-  tokenHash  String   @unique
+  id         String    @id @default(cuid())
+  tokenHash  String    @unique
   documentId String
   userId     String
+  sessionId  String?
   expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+  document   Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session    Session?  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
+  @@index([sessionId])
 }

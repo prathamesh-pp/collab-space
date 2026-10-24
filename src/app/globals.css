@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f7f8fa;
+  --foreground: #172033;
+  --surface: #ffffff;
+  --border: #e5e8ef;
+  --accent: #4338ca;
 }
 
 @theme inline {
@@ -12,25 +16,37 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #c7d2fe;
+  color: #1e1b4b;
 }
 
 .document-content {
-  min-height: 55vh;
-  padding: 2rem clamp(1.25rem, 5vw, 4rem);
-  color: #334155;
+  width: min(100%, 54rem);
+  min-height: 58vh;
+  margin-inline: auto;
+  padding: 3.5rem clamp(1.25rem, 7vw, 5rem) 5rem;
+  color: #344054;
   font-size: 1.0625rem;
-  line-height: 1.8;
+  line-height: 1.85;
   outline: none;
 }
 
@@ -41,22 +57,38 @@ body {
 .document-content h1,
 .document-content h2,
 .document-content h3 {
-  color: #0f172a;
-  font-weight: 700;
+  color: #172033;
+  font-weight: 650;
   line-height: 1.25;
 }
 
 .document-content h1 {
-  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-size: clamp(1.8rem, 4vw, 2.35rem);
 }
 
 .document-content h2 {
-  font-size: 1.5rem;
+  margin-top: 2rem;
+  font-size: 1.55rem;
+}
+
+.document-content h3 {
+  margin-top: 1.5rem;
+  font-size: 1.25rem;
+}
+
+.document-content p {
+  margin-block: 0.8rem;
+}
+
+.document-content strong {
+  color: #172033;
+  font-weight: 650;
 }
 
 .document-content ul,
 .document-content ol {
-  padding-left: 1.5rem;
+  padding-left: 1.6rem;
 }
 
 .document-content ul {
@@ -68,9 +100,28 @@ body {
 }
 
 .document-content p.is-editor-empty:first-child::before {
-  color: #94a3b8;
+  color: #98a2b3;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .document-content {
+    min-height: 50vh;
+    padding: 2rem 1.25rem 3.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
