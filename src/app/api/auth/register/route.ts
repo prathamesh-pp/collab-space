@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { SESSION_COOKIE, createSession } from "@/lib/session-core";
 import { jsonError } from "@/lib/http";
+import { isPasswordWithinLimit } from "@/lib/password";
 
 const schema = z.object({
   name: z.string().trim().min(2).max(60),
@@ -14,7 +15,7 @@ const schema = z.object({
 export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return jsonError("Enter a name, valid email, and password of at least 10 characters.", 400);
-  if (new TextEncoder().encode(parsed.data.password).length > 72) {
+  if (!isPasswordWithinLimit(parsed.data.password)) {
     return jsonError("Password must be 72 bytes or fewer.", 400);
   }
 

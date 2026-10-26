@@ -8,8 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test tests/permissions.test.ts tests/token.test.ts tests/document-content.test.ts tests/collaboration-ticket.test.ts tests/collaboration-server.test.ts tests/collaboration-persistence.test.ts tests/collaboration-client.test.ts tests/collaboration-server-hooks.test.ts tests/comments-core.test.ts tests/workspace-members.test.ts tests/dashboard-search.test.ts tests/recent-documents.test.ts tests/document-access.test.ts tests/document-editor-state.test.ts tests/dialog-accessibility.test.ts tests/create-document-dialog.test.tsx",
+    "test": "node --import tsx --test tests/permissions.test.ts tests/token.test.ts tests/password.test.ts tests/document-content.test.ts tests/collaboration-ticket.test.ts tests/collaboration-server.test.ts tests/collaboration-persistence.test.ts tests/collaboration-client.test.ts tests/collaboration-server-hooks.test.ts tests/comments-core.test.ts tests/workspace-members.test.ts tests/dashboard-search.test.ts tests/recent-documents.test.ts tests/document-access.test.ts tests/document-editor-state.test.ts tests/dialog-accessibility.test.ts tests/create-document-dialog.test.tsx",
     "db:generate": "prisma generate",
+    "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate": "prisma migrate dev --name init"
   },
   "dependencies": {

@@ -731,6 +731,7 @@ export default function Home() {
                 id="password"
                 type="password"
                 autoComplete={authMode === "login" ? "current-password" : "new-password"}
+                aria-describedby={authMode === "register" ? "password-help" : undefined}
                 required
                 minLength={authMode === "register" ? 10 : 1}
                 maxLength={128}
@@ -739,6 +740,11 @@ export default function Home() {
                 placeholder={authMode === "register" ? "At least 10 characters" : "Your password"}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
               />
+              {authMode === "register" && (
+                <p id="password-help" className="mt-2 text-xs leading-5 text-slate-500">
+                  Use at least 10 characters and no more than 72 UTF-8 bytes.
+                </p>
+              )}
             </div>
 
             {error && (

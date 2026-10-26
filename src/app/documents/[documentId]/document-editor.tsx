@@ -1020,7 +1020,7 @@ function DocumentAccessDialog({
             </span>
             <div className="min-w-0">
               <h2 id="document-access-title" className="text-lg font-semibold tracking-tight">
-                Share and access
+                Workspace access
               </h2>
               <p className="mt-1 truncate text-sm text-slate-500">
                 Workspace members for {workspaceName}
@@ -1031,7 +1031,7 @@ function DocumentAccessDialog({
             type="button"
             autoFocus
             onClick={onClose}
-            aria-label="Close share and access dialog"
+            aria-label="Close workspace access dialog"
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-indigo-700"
           >
             <X size={18} aria-hidden="true" />
@@ -1340,11 +1340,11 @@ export default function DocumentEditor({
                   type="button"
                   onClick={() => setAccessOpen(true)}
                   aria-haspopup="dialog"
-                  aria-label="Open sharing and access details"
+                  aria-label="View workspace access"
                   className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
                 >
                   <Users size={16} aria-hidden="true" />
-                  <span>Share / Access</span>
+                  <span>Access</span>
                 </button>
                 <button
                   type="button"

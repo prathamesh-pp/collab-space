@@ -8,17 +8,17 @@ The currently implemented endpoints are listed below. Version history is not exp
 
 ### `POST /api/auth/register`
 
-Body: `{ "name": "Ada Lovelace", "email": "ada@example.com", "password": "at least 10 characters" }`
+Body: `{ "name": "Ada Lovelace", "email": "ada@example.com", "password": "at least 10 characters, at most 72 UTF-8 bytes" }`
 
 Success: `201` with a public user object and session cookie. Creates a personal workspace, owner membership, and starter document atomically. Email is normalized to lowercase. Passwords are bcrypt-hashed; passwords longer than 72 UTF-8 bytes are rejected.
 
-Errors: `400` invalid input, `409` email already registered, `500` generic account/database failure.
+Errors: `400` invalid input or password exceeding 72 UTF-8 bytes, `409` email already registered, `500` generic account/database failure.
 
 ### `POST /api/auth/login`
 
 Body: `{ "email": "ada@example.com", "password": "..." }`
 
-Success: `200` with a public user object and session cookie. Invalid credentials return the same `401` response.
+Success: `200` with a public user object and session cookie. Invalid credentials return the same `401` response. Password values over 72 UTF-8 bytes are rejected with `400` before bcrypt comparison.
 
 ### `POST /api/auth/logout`
 
@@ -129,4 +129,4 @@ Snapshots should be created server-side only after a successful content write, a
 
 ## Error Shape
 
-Validation and authorization errors use `{ "error": "..." }` with a 4xx status. Unexpected failures handled by the shared wrapper use a generic `500` response. Registration has its own generic failure handler. Automated database integration tests are not included; authenticated live smoke tests have verified document content reads and saves.
+Validation and authorization errors use `{ "error": "..." }` with a 4xx status. Unexpected failures handled by the shared wrapper use a generic `500` response. Registration has its own generic failure handler. Automated database integration tests are not included; the isolated unit tests use in-memory repositories and do not verify live PostgreSQL behavior.
