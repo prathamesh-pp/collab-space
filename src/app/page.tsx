@@ -611,7 +611,7 @@ export default function Home() {
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-indigo-700">
                 <LayoutDashboard size={20} aria-hidden="true" />
               </span>
-              <span className="text-lg font-semibold tracking-tight">CollabSpace</span>
+              <span className="text-lg font-semibold tracking-tight">Collabry</span>
             </div>
             <div className="relative max-w-sm">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-200">
@@ -636,7 +636,7 @@ export default function Home() {
                   <LayoutDashboard size={20} aria-hidden="true" />
                 </span>
                 <span className="text-lg font-semibold tracking-tight text-slate-900">
-                  CollabSpace
+                  Collabry
                 </span>
               </div>
             </div>
@@ -780,7 +780,7 @@ export default function Home() {
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-700 text-white shadow-sm">
             <LayoutDashboard size={19} aria-hidden="true" />
           </span>
-          <span className="text-base font-semibold tracking-tight">CollabSpace</span>
+          <span className="text-base font-semibold tracking-tight">Collabry</span>
         </Link>
         <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
           Workspace
@@ -839,7 +839,7 @@ export default function Home() {
               <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-700 text-white">
                 <LayoutDashboard size={18} aria-hidden="true" />
               </span>
-              <span className="font-semibold tracking-tight">CollabSpace</span>
+              <span className="font-semibold tracking-tight">Collabry</span>
             </Link>
             <p className="hidden text-sm font-medium text-slate-500 lg:block">
               Workspace overview

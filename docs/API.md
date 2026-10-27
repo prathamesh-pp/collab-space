@@ -1,4 +1,4 @@
-# API Reference
+# Collabry API Reference
 
 Base URL for local development: `http://localhost:3000`. JSON request and response bodies are used. Authentication is a browser cookie named `collab_session`; it is `httpOnly`, `SameSite=Lax`, path `/`, and `Secure` in production. Do not send a session token in JSON or logs.
 

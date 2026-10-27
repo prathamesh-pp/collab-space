@@ -1,5 +1,5 @@
-# Collab Space
-Collab Space is an early-stage Next.js App Router project with account registration and login, opaque database-backed sessions, workspace management, and a persistent TipTap document editor. Rich-text content is saved as validated JSON with revision checks. TipTap/Yjs/Hocuspocus integration code is present, but collaboration is currently disabled in every environment pending safe persistence-failure reporting and integration tests.
+# Collabry
+Collabry is an early-stage Next.js App Router project with account registration and login, opaque database-backed sessions, workspace management, and a persistent TipTap document editor. Rich-text content is saved as validated JSON with revision checks. TipTap/Yjs/Hocuspocus integration code is present, but collaboration is currently disabled in every environment pending safe persistence-failure reporting and integration tests.
 
 ## Status
 
@@ -41,7 +41,7 @@ The app requires PostgreSQL at runtime. These steps are for an isolated, local, 
    Copy-Item .env.example .env
    ```
 
-   Update only your local `.env` so `DATABASE_URL` matches your local PostgreSQL host, port, database name, username, and password. The template is an example, not a guaranteed match for your installation. Keep credentials out of source control and logs; `.env` is ignored by Git.
+   Update only your local `.env` so `DATABASE_URL` and `DATABASE_URL_UNPOOLED` match your local PostgreSQL connection. They may use the same direct URL locally. For Neon, use the pooled URL for `DATABASE_URL` and the direct URL for `DATABASE_URL_UNPOOLED`. The template is an example, not a guaranteed match for your installation. Keep credentials out of source control and logs; `.env` is ignored by Git.
 
 4. Install locked dependencies, generate Prisma Client, and then apply the checked-in migration history:
 
@@ -76,7 +76,8 @@ Database setup, migrations, and live save/reload are not covered by automated un
 
 | Variable | Required | Description |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | PostgreSQL connection string, e.g. `postgresql://postgres:<password>@localhost:5432/collab_space?schema=public`. Use a least-privilege application account outside local development. |
+| `DATABASE_URL` | Yes | PostgreSQL runtime connection. For Neon/Vercel use Neon's pooled connection string; locally use your PostgreSQL connection. |
+| `DATABASE_URL_UNPOOLED` | For Prisma CLI | Direct PostgreSQL connection used by Prisma CLI operations such as migrations. For Neon, use the unpooled connection string. It may match `DATABASE_URL` for a local database without a pooler. |
 | `COLLABORATION_PORT` | For `dev:collab` | WebSocket server port (1-65535). |
 | `COLLABORATION_ALLOWED_ORIGINS` | For `dev:collab` | Comma-separated exact browser origins; HTTPS in production, loopback HTTP for local development. Wildcards and paths are rejected. |
 | `COLLABORATION_HOST` | No | Bind address for the separate WebSocket process; defaults to `127.0.0.1`. |
@@ -105,7 +106,7 @@ flowchart LR
   Prisma --> DB
 ```
 
-The existing TipTap JSON autosave remains the active content path. Collaboration configuration accepts only exact `NODE_ENV=development` plus an explicit `"true"` opt-in, but the operational readiness gate currently disables the editor, ticket endpoint, JSON-write guard, and server hooks in all environments. This fail-closed state is required because Hocuspocus v3.1.1 does not await debounced persistence failures from its document-update callback; those failures cannot currently be presented as durable-save status. Migration application status is unknown and must be explicitly verified before any future activation. Two-browser and database integration tests are still required. The persistence design assumes one collaboration-server process per document; no Redis/shared-document coordination or active-socket revocation mechanism is configured.
+The existing TipTap JSON autosave remains the active content path. Collaboration configuration accepts only exact `NODE_ENV=development` plus an explicit `"true"` opt-in, but the operational readiness gate currently disables the editor, ticket endpoint, JSON-write guard, and server hooks in all environments. This fail-closed state is required because Hocuspocus v3.1.1 does not await debounced persistence failures from its document-update callback; those failures cannot currently be presented as durable-save status. The local development database migration was applied and verified; any production database still needs its own reviewed `migrate deploy` step. Two-browser and database integration tests are still required. The persistence design assumes one collaboration-server process per document; no Redis/shared-document coordination or active-socket revocation mechanism is configured.
 
 Do not enable collaboration or remove the operational readiness gate until Hocuspocus persistence failures can be reliably observed without detached rejections, the required migration has been explicitly approved and confirmed applied, and database and two-client integration tests have passed. The configured flag alone does not activate collaboration. Do not expose tickets in URLs or logs.
 
@@ -141,14 +142,7 @@ The automated tests use isolated core logic, in-memory repositories, and local f
 
 ## Deployment
 
-- Deploy the Next.js application as a Node.js server; this is not a static export.
-- Set `DATABASE_URL` in the hosting secret manager and run `npm run db:migrate:deploy` against the intended database before serving traffic.
-- The supported setup runs the Next.js application only; Hocuspocus is not required and collaboration remains disabled. Do not start or expose a collaboration server as a working feature until its readiness gate and integration requirements have been resolved.
-- If collaboration is explicitly approved and made ready in a future release, run the Next.js and Hocuspocus processes separately, configure `COLLABORATION_PORT` and an exact `COLLABORATION_ALLOWED_ORIGINS` allowlist, and terminate TLS at a trusted reverse proxy for production WebSocket connections.
-- Use HTTPS so production session cookies have the `Secure` flag. Use a least-privilege database account with TLS.
-- Use Node.js 20.19+ or a current LTS to avoid the local Node 20.16 engine warning.
-- Back up PostgreSQL and verify restore procedures. Expired-session and collaboration-ticket cleanup jobs are not implemented.
-- Horizontal scaling and active-socket authorization revocation are not configured. Collaboration and its persistence hooks are currently fail-closed in every environment; do not deploy this as a production collaborative editor.
+See [Vercel + Neon deployment checklist](docs/DEPLOYMENT.md) for project setup, connection strings, controlled migration deployment, and production smoke tests. The app uses Next.js server features and must run on Vercel's Node.js runtime; it is not a static export. Real-time collaboration remains disabled and the separate Hocuspocus server must not be deployed as part of this setup.
 
 ## Presentation
 

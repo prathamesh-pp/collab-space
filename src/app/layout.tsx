@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CollabSpace — work, together",
-  description: "A thoughtful home for your team's projects and documents.",
+  title: "Collabry — work, together",
+  description: "A thoughtful home for your team's projects and documents, together in Collabry.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
