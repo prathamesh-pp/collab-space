@@ -3,6 +3,8 @@ import { canEdit, getWorkspaceMembership } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getApiUser, jsonError, withApiErrors } from "@/lib/http";
 import { parseDocumentContent } from "@/lib/document-content";
+import { documentContentFromYState } from "@/collaboration/persistence";
+import { getDocumentStateVersion } from "@/lib/document-content-save";
 
 const schema = z.object({ title: z.string().trim().min(1).max(120) });
 
@@ -19,6 +21,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ doc
       title: true,
       content: true,
       contentRevision: true,
+      yState: true,
       createdAt: true,
       updatedAt: true,
       workspace: {
@@ -35,13 +38,17 @@ export async function GET(_request: Request, { params }: { params: Promise<{ doc
   if (!document) return jsonError("Document not found.", 404);
   const membership = await getWorkspaceMembership(user.id, document.workspaceId);
   if (!membership) return jsonError("Document not found.", 404);
+  const { yState, ...documentData } = document;
   return Response.json({
     document: {
-      ...document,
-      content: parseDocumentContent(document.content),
+      ...documentData,
+      content: yState
+        ? documentContentFromYState(yState)
+        : parseDocumentContent(document.content),
+      contentStateVersion: getDocumentStateVersion(yState),
     },
     role: membership.role,
-  });
+  }, { headers: { "Cache-Control": "private, no-store, max-age=0" } });
   });
 }
 

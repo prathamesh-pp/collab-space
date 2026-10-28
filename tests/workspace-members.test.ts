@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  addWorkspaceMember,
   listWorkspaceMembers,
   removeWorkspaceMember,
   updateWorkspaceMemberRole,
@@ -33,6 +34,10 @@ class MemoryWorkspaceMembers implements WorkspaceMembersRepository {
     name: "Product",
   };
   members = [member("owner", "OWNER"), member("member", "EDITOR")];
+  users = [
+    ...this.members.map(({ userId, name, email }) => ({ id: userId, name, email })),
+    { id: "new-user", name: "Katherine Johnson", email: "katherine@example.test" },
+  ];
 
   async findWorkspace(workspaceId: string) {
     return this.workspace?.id === workspaceId ? this.workspace : null;
@@ -52,6 +57,8 @@ class MemoryWorkspaceMembers implements WorkspaceMembersRepository {
   ) {
     return callback({
       findRole: async (workspaceId, userId) => this.findRole(workspaceId, userId),
+      findUserByEmail: async (email) =>
+        this.users.find((user) => user.email === email) ?? null,
       findMember: async (workspaceId, userId) => {
         if (this.workspace?.id !== workspaceId) return null;
         const found = this.members.find((item) => item.userId === userId);
@@ -70,6 +77,14 @@ class MemoryWorkspaceMembers implements WorkspaceMembersRepository {
       removeMember: async (workspaceId, userId) => {
         assert.equal(this.workspace?.id, workspaceId);
         this.members = this.members.filter((item) => item.userId !== userId);
+      },
+      addMember: async (workspaceId, userId, role) => {
+        assert.equal(this.workspace?.id, workspaceId);
+        if (this.members.some((item) => item.userId === userId)) return false;
+        const user = this.users.find((item) => item.id === userId);
+        assert.ok(user);
+        this.members.push(member(userId, role, user));
+        return true;
       },
     });
   }
@@ -97,6 +112,46 @@ test("nonmembers and missing workspaces cannot view members", async () => {
     (await listWorkspaceMembers(repository, "missing", "owner")).status,
     404,
   );
+});
+
+test("owners can add an existing account with an authorized workspace role", async () => {
+  const repository = new MemoryWorkspaceMembers();
+  const result = await addWorkspaceMember(
+    repository,
+    "workspace-1",
+    "owner",
+    "  KATHERINE@example.test ",
+    "EDITOR",
+  );
+  assert.equal(result.status, 201);
+  assert.deepEqual(result.body, {
+    userId: "new-user",
+    name: "Katherine Johnson",
+    email: "katherine@example.test",
+    role: "EDITOR",
+  });
+  assert.equal(repository.members.find((item) => item.userId === "new-user")?.role, "EDITOR");
+});
+
+test("only owners can add members, and invalid or duplicate additions are rejected", async () => {
+  const repository = new MemoryWorkspaceMembers();
+  assert.equal(
+    (await addWorkspaceMember(repository, "workspace-1", "member", "katherine@example.test", "EDITOR")).status,
+    403,
+  );
+  assert.equal(
+    (await addWorkspaceMember(repository, "workspace-1", "owner", "unknown@example.test", "EDITOR")).status,
+    404,
+  );
+  assert.equal(
+    (await addWorkspaceMember(repository, "workspace-1", "owner", "katherine@example.test", "OWNER")).status,
+    400,
+  );
+  assert.equal(
+    (await addWorkspaceMember(repository, "workspace-1", "owner", "member@example.test", "VIEWER")).status,
+    409,
+  );
+  assert.equal(repository.members.length, 2);
 });
 
 test("only owners can update roles and OWNER cannot be granted", async () => {

@@ -19,6 +19,7 @@ import {
   CollaborationPersistenceError,
   CollaborationPersistenceHealth,
   createCollaborationPersistenceHooks,
+  documentContentFromYState,
   InvalidDocumentContentError,
   InvalidYStateError,
   loadOrInitializeYDoc,
@@ -87,6 +88,18 @@ test("binary Yjs state is loaded without reseeding", async () => {
     content,
   );
   assert.equal(mocked.getInitializeCalls(), 0);
+});
+
+test("legacy document loading reads the current content from persisted Yjs state", () => {
+  const source = prosemirrorJSONToYDoc(
+    collaborationSchema,
+    content,
+    COLLABORATION_FRAGMENT,
+  );
+  const state = encodeStateAsUpdate(source);
+
+  assert.deepEqual(documentContentFromYState(state), content);
+  source.destroy();
 });
 
 test("validated TipTap JSON is seeded as binary Yjs state", async () => {

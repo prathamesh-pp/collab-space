@@ -3,16 +3,17 @@ import { isSameOriginRequest } from "@/lib/collaboration-ticket";
 import { createCollaborationTicket } from "@/lib/session-core";
 import { prisma } from "@/lib/db";
 import { jsonError, withApiErrors } from "@/lib/http";
-import { isCollaborationOperationallyEnabled } from "@/collaboration/feature-flag";
+import { isClientCollaborationConfigured } from "@/collaboration/feature-flag";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ documentId: string }> },
 ) {
   return withApiErrors(async () => {
-    if (!isCollaborationOperationallyEnabled(
+    if (!isClientCollaborationConfigured(
       process.env.NEXT_PUBLIC_COLLABORATION_ENABLED,
       process.env.NODE_ENV,
+      process.env.NEXT_PUBLIC_COLLABORATION_URL,
     )) {
       return jsonError("Collaborative editing is not enabled.", 503);
     }

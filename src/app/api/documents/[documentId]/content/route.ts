@@ -1,16 +1,21 @@
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { canEdit, getWorkspaceMembership } from "@/lib/auth";
 import { parseDocumentContent } from "@/lib/document-content";
 import { prisma } from "@/lib/db";
 import { getApiUser, jsonError, withApiErrors } from "@/lib/http";
-import { isCollaborationOperationallyEnabled } from "@/collaboration/feature-flag";
+import { isClientCollaborationConfigured } from "@/collaboration/feature-flag";
+import {
+  createPrismaDocumentContentSaveRepository,
+  saveDocumentContentWith,
+} from "@/lib/document-content-save";
 
 const MAX_REQUEST_LENGTH = 1_500_000;
 const schema = z.object({
   content: z.unknown(),
   expectedRevision: z.number().int().nonnegative(),
+  expectedStateVersion: z.string().length(64).nullable(),
 }).strict();
+const contentSaveRepository = createPrismaDocumentContentSaveRepository();
 
 async function readLimitedBody(request: Request): Promise<string | null> {
   const contentLength = Number(request.headers.get("content-length"));
@@ -63,9 +68,10 @@ export async function PUT(
     if (!canEdit(membership.role)) {
       return jsonError("You do not have permission to edit this document.", 403);
     }
-    if (isCollaborationOperationallyEnabled(
+    if (isClientCollaborationConfigured(
       process.env.NEXT_PUBLIC_COLLABORATION_ENABLED,
       process.env.NODE_ENV,
+      process.env.NEXT_PUBLIC_COLLABORATION_URL,
     )) {
       return jsonError(
         "JSON autosave is disabled while collaborative editing is enabled.",
@@ -93,35 +99,13 @@ export async function PUT(
     const content = parseDocumentContent(parsed.data.content);
     if (!content) return jsonError("Document content is invalid or too large.", 400);
 
-    const result = await prisma.document.updateMany({
-      where: {
-        id: documentId,
-        contentRevision: parsed.data.expectedRevision,
-        yState: null,
-      },
-      data: {
-        content: content as Prisma.InputJsonValue,
-        contentRevision: { increment: 1 },
-      },
-    });
-
-    if (result.count === 0) {
-      const current = await prisma.document.findUnique({
-        where: { id: documentId },
-        select: { contentRevision: true, yState: true },
-      });
-      if (!current) return jsonError("Document not found.", 404);
-      return Response.json(
-        {
-          error: current.yState
-            ? "This document is managed by collaborative editing and cannot be saved as JSON."
-            : "A newer version of this document was saved. Reload before saving again.",
-          contentRevision: current.contentRevision,
-        },
-        { status: 409 },
-      );
-    }
-
-    return Response.json({ contentRevision: parsed.data.expectedRevision + 1 });
+    const result = await saveDocumentContentWith(
+      contentSaveRepository,
+      documentId,
+      content,
+      parsed.data.expectedRevision,
+      parsed.data.expectedStateVersion,
+    );
+    return Response.json(result.body, { status: result.status });
   });
 }

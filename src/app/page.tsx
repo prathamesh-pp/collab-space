@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -72,6 +72,9 @@ function WorkspaceMembersDialog({
   const [draftRoles, setDraftRoles] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<"EDITOR" | "COMMENTER" | "VIEWER">("EDITOR");
+  const [addingMember, setAddingMember] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const isOwner = workspace.role === "OWNER";
@@ -197,6 +200,29 @@ function WorkspaceMembersDialog({
     }
   }
 
+  async function addMember(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setAddingMember(true);
+    setError("");
+    setNotice("");
+    try {
+      const response = await fetch(`/api/workspaces/${workspace.id}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Could not add this member.");
+      setInviteEmail("");
+      setNotice(`Added ${data.name} to the workspace.`);
+      await refreshMembers();
+    } catch (addError) {
+      setError(addError instanceof Error ? addError.message : "Unable to add this member.");
+    } finally {
+      setAddingMember(false);
+    }
+  }
+
   return (
     <dialog
       ref={dialogRef}
@@ -254,6 +280,42 @@ function WorkspaceMembersDialog({
             <p role="status" className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
               {notice}
             </p>
+          )}
+
+          {isOwner && (
+            <form onSubmit={addMember} className="mb-5 rounded-xl border border-indigo-100 bg-white p-4 shadow-sm">
+              <h3 className="text-sm font-semibold text-slate-900">Add a workspace member</h3>
+              <p className="mt-1 text-xs text-slate-500">They need an existing Collabry account. Members can access workspace documents according to their role.</p>
+              <div className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto_auto]">
+                <label className="sr-only" htmlFor="workspace-member-email">Member email</label>
+                <input
+                  id="workspace-member-email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={inviteEmail}
+                  onChange={(event) => setInviteEmail(event.target.value)}
+                  placeholder="name@example.com"
+                  disabled={addingMember}
+                  className="h-10 min-w-0 rounded-lg border border-slate-200 px-3 text-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:opacity-50"
+                />
+                <label className="sr-only" htmlFor="workspace-member-role">Member role</label>
+                <select
+                  id="workspace-member-role"
+                  value={inviteRole}
+                  onChange={(event) => setInviteRole(event.target.value as typeof inviteRole)}
+                  disabled={addingMember}
+                  className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 disabled:opacity-50"
+                >
+                  <option value="EDITOR">Editor</option>
+                  <option value="COMMENTER">Commenter</option>
+                  <option value="VIEWER">Viewer</option>
+                </select>
+                <button type="submit" disabled={addingMember || !inviteEmail.trim()} className="inline-flex h-10 items-center justify-center rounded-lg bg-indigo-700 px-4 text-sm font-semibold text-white hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300">
+                  {addingMember ? "Adding..." : "Add member"}
+                </button>
+              </div>
+            </form>
           )}
 
           {loading ? (
@@ -349,7 +411,7 @@ function WorkspaceMembersDialog({
         <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 bg-white px-5 py-4 sm:px-6">
           <p className="text-xs text-slate-500">
             {isOwner
-              ? "Owners can manage roles and remove members. Owner access cannot be granted here."
+              ? "Owners can add members and manage roles. Owner access cannot be granted here."
               : "Only workspace owners can change roles or remove members."}
           </p>
           <button

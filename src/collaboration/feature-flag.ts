@@ -1,21 +1,33 @@
-// Hocuspocus v3.1.1 detaches debounced store failures from the update callback.
-const COLLABORATION_PERSISTENCE_FAILURE_REPORTING_READY = false;
-
 export function isCollaborationFeatureEnabled(
   enabled: string | undefined,
   nodeEnvironment: string | undefined,
 ): boolean {
-  return enabled === "true" && nodeEnvironment === "development";
+  return enabled === "true" &&
+    (nodeEnvironment === "development" || nodeEnvironment === "production");
 }
 
 export function isCollaborationOperationallyEnabled(
   enabled: string | undefined,
   nodeEnvironment: string | undefined,
 ): boolean {
-  return (
-    COLLABORATION_PERSISTENCE_FAILURE_REPORTING_READY &&
-    isCollaborationFeatureEnabled(enabled, nodeEnvironment)
-  );
+  return isCollaborationFeatureEnabled(enabled, nodeEnvironment);
+}
+
+export function isClientCollaborationConfigured(
+  enabled: string | undefined,
+  nodeEnvironment: string | undefined,
+  websocketUrl: string | undefined,
+): boolean {
+  if (!isCollaborationOperationallyEnabled(enabled, nodeEnvironment) || !websocketUrl) {
+    return false;
+  }
+
+  try {
+    const url = new URL(websocketUrl);
+    return (url.protocol === "ws:" || url.protocol === "wss:") && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
 }
 
 export function selectDocumentEditorMode(

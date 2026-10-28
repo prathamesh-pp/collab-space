@@ -11,7 +11,7 @@ import {
 
 export type CollaborationServerHooks = Pick<
   Configuration,
-  "onAuthenticate" | "onLoadDocument" | "onStoreDocument"
+  "onAuthenticate" | "onLoadDocument" | "onStoreDocument" | "debounce"
 >;
 
 export function createCollaborationServerHooks({
@@ -29,6 +29,7 @@ export function createCollaborationServerHooks({
 }): CollaborationServerHooks {
   if (!isCollaborationOperationallyEnabled(enabled, nodeEnvironment)) {
     return {
+      debounce: 0,
       onAuthenticate: async () => {
         throw new Error("Collaboration is disabled.");
       },
@@ -40,6 +41,9 @@ export function createCollaborationServerHooks({
       allowedOrigins,
       consumeTicket,
     ),
+    // Store each update in the update path so persistence failures are surfaced
+    // to the client before the update is acknowledged.
+    debounce: 0,
     ...createCollaborationPersistenceHooks(persistenceRepository),
   };
 }

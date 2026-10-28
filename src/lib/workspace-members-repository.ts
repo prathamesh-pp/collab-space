@@ -51,6 +51,11 @@ export const workspaceMembersRepository: WorkspaceMembersRepository = {
             });
             return membership?.role ?? null;
           },
+          findUserByEmail: (email) =>
+            tx.user.findUnique({
+              where: { email },
+              select: { id: true, name: true, email: true },
+            }),
           findMember: async (workspaceId, userId) => {
             const membership = await tx.workspaceMember.findUnique({
               where: { workspaceId_userId: { workspaceId, userId } },
@@ -72,6 +77,13 @@ export const workspaceMembersRepository: WorkspaceMembersRepository = {
             await tx.workspaceMember.delete({
               where: { workspaceId_userId: { workspaceId, userId } },
             });
+          },
+          addMember: async (workspaceId, userId, role) => {
+            const result = await tx.workspaceMember.createMany({
+              data: { workspaceId, userId, role },
+              skipDuplicates: true,
+            });
+            return result.count === 1;
           },
         }),
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },

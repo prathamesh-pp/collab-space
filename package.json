@@ -5,18 +5,19 @@
   "scripts": {
     "dev": "next dev",
     "dev:collab": "tsx src/collaboration/server.ts",
+    "start:collab": "tsx src/collaboration/server.ts",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --import tsx --test tests/permissions.test.ts tests/token.test.ts tests/password.test.ts tests/document-content.test.ts tests/collaboration-ticket.test.ts tests/collaboration-server.test.ts tests/collaboration-persistence.test.ts tests/collaboration-client.test.ts tests/collaboration-server-hooks.test.ts tests/comments-core.test.ts tests/workspace-members.test.ts tests/dashboard-search.test.ts tests/recent-documents.test.ts tests/document-access.test.ts tests/document-editor-state.test.ts tests/dialog-accessibility.test.ts tests/create-document-dialog.test.tsx",
+    "test": "node --import tsx --test tests/permissions.test.ts tests/token.test.ts tests/password.test.ts tests/document-content.test.ts tests/collaboration-ticket.test.ts tests/collaboration-server.test.ts tests/collaboration-persistence.test.ts tests/collaboration-client.test.ts tests/collaboration-sync.test.ts tests/collaboration-server-hooks.test.ts tests/comments-core.test.ts tests/workspace-members.test.ts tests/dashboard-search.test.ts tests/recent-documents.test.ts tests/document-access.test.ts tests/document-editor-state.test.ts tests/dialog-accessibility.test.ts tests/create-document-dialog.test.tsx",
     "db:generate": "prisma generate",
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate": "prisma migrate dev --name init"
   },
   "dependencies": {
     "@next/env": "16.4.3",
-    "@hocuspocus/provider": "^3.1.1",
-    "@hocuspocus/server": "^3.1.1",
+    "@hocuspocus/provider": "3.4.4",
+    "@hocuspocus/server": "3.4.4",
     "@prisma/client": "^6.12.0",
     "@tiptap/core": "3.32.0",
     "@tiptap/extension-collaboration": "^3.32.0",
@@ -31,6 +32,7 @@
     "next": "16.4.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "tsx": "^4.20.6",
     "yjs": "^13.6.27",
     "zod": "^4.1.12"
   },
@@ -44,7 +46,6 @@
     "eslint-config-next": "16.4.3",
     "prisma": "^6.12.0",
     "tailwindcss": "^4",
-    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

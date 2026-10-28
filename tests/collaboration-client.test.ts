@@ -8,6 +8,7 @@ import {
 } from "../src/collaboration/client";
 import { createCollaborativeEditorExtensions } from "../src/collaboration/editor-extensions";
 import {
+  isClientCollaborationConfigured,
   isCollaborationFeatureEnabled,
   isCollaborationOperationallyEnabled,
   selectDocumentEditorMode,
@@ -27,17 +28,18 @@ class TrackedDoc extends Doc {
   }
 }
 
-test("collaboration requires explicit development opt-in and remains operationally disabled", () => {
+test("collaboration requires an explicit opt-in and respects the disabled production flag", () => {
   assert.equal(isCollaborationFeatureEnabled(undefined, "development"), false);
   assert.equal(isCollaborationFeatureEnabled("false", "development"), false);
-  assert.equal(isCollaborationFeatureEnabled("true", "production"), false);
+  assert.equal(isCollaborationFeatureEnabled("true", "production"), true);
+  assert.equal(isCollaborationFeatureEnabled("false", "production"), false);
   assert.equal(isCollaborationFeatureEnabled("true", "test"), false);
   assert.equal(isCollaborationFeatureEnabled("true", "staging"), false);
   assert.equal(isCollaborationFeatureEnabled("true", undefined), false);
   assert.equal(isCollaborationFeatureEnabled("true", "development"), true);
   assert.equal(
     isCollaborationOperationallyEnabled("true", "development"),
-    false,
+    true,
   );
   assert.equal(selectDocumentEditorMode(false, "OWNER"), "legacy");
   assert.equal(selectDocumentEditorMode(true, "OWNER"), "collaborative");
@@ -45,6 +47,21 @@ test("collaboration requires explicit development opt-in and remains operational
   assert.equal(selectDocumentEditorMode(true, "COMMENTER"), "legacy");
   assert.equal(selectDocumentEditorMode(true, "VIEWER"), "legacy");
   assert.equal(selectDocumentEditorMode(true, null), "legacy");
+  assert.equal(isCollaborationOperationallyEnabled("true", "production"), true);
+  assert.equal(isCollaborationOperationallyEnabled("false", "production"), false);
+  assert.equal(isClientCollaborationConfigured("true", "development", undefined), false);
+  assert.equal(isClientCollaborationConfigured("true", "development", "not-a-websocket"), false);
+  assert.equal(isClientCollaborationConfigured("true", "development", "ws://localhost:1234"), true);
+  assert.equal(isClientCollaborationConfigured("false", "production", "wss://collab.example.test"), false);
+  for (const role of ["OWNER", "EDITOR"] as const) {
+    assert.equal(
+      selectDocumentEditorMode(
+        isClientCollaborationConfigured("true", "development", undefined),
+        role,
+      ),
+      "legacy",
+    );
+  }
 });
 
 test("collaboration provider configuration requests a fresh in-memory ticket per handshake", async () => {

@@ -269,6 +269,31 @@ test("document mismatch and removed or changed memberships are rejected", async 
   }
 });
 
+test("workspace owners and editors can collaborate while read-only roles and outsiders cannot edit", async (context) => {
+  for (const role of ["OWNER", "EDITOR"] as const) {
+    await context.test(`${role} member can consume a document ticket`, async () => {
+      const repository = new MemoryTicketRepository();
+      repository.ticket = makeTicket({ role });
+      repository.membershipRole = role;
+      assert.deepEqual(
+        await consumeCollaborationTicketWith(ticketToken, "document-1", repository, now),
+        { documentId: "document-1", userId: "user-1", role },
+      );
+    });
+  }
+
+  for (const role of ["COMMENTER", "VIEWER", null] as const) {
+    await context.test(`${role ?? "nonmember"} cannot consume an edit ticket`, async () => {
+      const repository = new MemoryTicketRepository();
+      repository.membershipRole = role;
+      assert.equal(
+        await consumeCollaborationTicketWith(ticketToken, "document-1", repository, now),
+        null,
+      );
+    });
+  }
+});
+
 test("same-origin checks reject foreign and missing origins", () => {
   assert.equal(
     isSameOriginRequest(sameOriginRequest("https://app.example.test")),

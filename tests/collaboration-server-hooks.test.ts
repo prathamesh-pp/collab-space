@@ -34,10 +34,9 @@ function createHooks(enabled: string | undefined, nodeEnvironment: string | unde
   return { hooks, getConsumeCalls: () => consumeCalls };
 }
 
-test("unsafe Hocuspocus store lifecycle cannot activate collaboration hooks", async (context) => {
+test("collaboration stays disabled unless explicitly enabled", async (context) => {
   const configurations: Array<[string | undefined, string | undefined]> = [
-    ["true", "development"],
-    ["true", "production"],
+    ["false", "production"],
     ["true", "test"],
     ["true", "staging"],
     ["true", undefined],
@@ -68,4 +67,9 @@ test("unsafe Hocuspocus store lifecycle cannot activate collaboration hooks", as
       assert.equal(getConsumeCalls(), 0);
     });
   }
+
+  const { hooks } = createHooks("true", "development");
+  assert.equal(typeof hooks.onLoadDocument, "function");
+  assert.equal(typeof hooks.onStoreDocument, "function");
+  assert.equal(hooks.debounce, 0);
 });

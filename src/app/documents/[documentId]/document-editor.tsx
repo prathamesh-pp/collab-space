@@ -45,7 +45,7 @@ import { closeDialogOnEscape } from "@/lib/dialog-accessibility";
 import { createCollaborationClient } from "@/collaboration/client";
 import { createCollaborativeEditorExtensions } from "@/collaboration/editor-extensions";
 import {
-  isCollaborationOperationallyEnabled,
+  isClientCollaborationConfigured,
   selectDocumentEditorMode,
 } from "@/collaboration/feature-flag";
 
@@ -55,6 +55,7 @@ type DocumentData = {
   updatedAt: string;
   content: JSONContent | null;
   contentRevision: number;
+  contentStateVersion: string | null;
   workspace: { id: string; name: string };
 };
 
@@ -210,15 +211,18 @@ function RichTextEditor({
   documentId,
   initialContent,
   initialRevision,
+  initialStateVersion,
   editable,
 }: {
   documentId: string;
   initialContent: JSONContent | null;
   initialRevision: number;
+  initialStateVersion: string | null;
   editable: boolean;
 }) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
   const revisionRef = useRef(initialRevision);
+  const stateVersionRef = useRef(initialStateVersion);
   const latestContentRef = useRef<JSONContent | null>(null);
   const editVersionRef = useRef(0);
   const savingRef = useRef(false);
@@ -265,6 +269,7 @@ function RichTextEditor({
         body: JSON.stringify({
           content,
           expectedRevision: revisionRef.current,
+          expectedStateVersion: stateVersionRef.current,
         }),
       });
       const data = await response.json();
@@ -279,6 +284,7 @@ function RichTextEditor({
       }
 
       revisionRef.current = data.contentRevision;
+      stateVersionRef.current = data.contentStateVersion;
       if (mountedRef.current) {
         setSaveStatus(
           savedVersion === editVersionRef.current ? "saved" : "unsaved",
@@ -1184,6 +1190,7 @@ export default function DocumentEditor({
       try {
         const response = await fetch(`/api/documents/${documentId}`, {
           signal: controller.signal,
+          cache: "no-store",
         });
         const data = await response.json();
 
@@ -1250,9 +1257,10 @@ export default function DocumentEditor({
   }
 
   const editable = canEdit(role ?? "");
-  const collaborationEnabled = isCollaborationOperationallyEnabled(
+  const collaborationEnabled = isClientCollaborationConfigured(
     process.env.NEXT_PUBLIC_COLLABORATION_ENABLED,
     process.env.NODE_ENV,
+    process.env.NEXT_PUBLIC_COLLABORATION_URL,
   );
   const editorMode = selectDocumentEditorMode(collaborationEnabled, role);
   const titleChanged = document !== null && title.trim() !== document.title;
@@ -1394,6 +1402,7 @@ export default function DocumentEditor({
                   documentId={document.id}
                   initialContent={document.content}
                   initialRevision={document.contentRevision}
+                  initialStateVersion={document.contentStateVersion}
                   editable={editable}
                 />
               )}

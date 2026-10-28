@@ -1,4 +1,4 @@
-import { prosemirrorJSONToYDoc } from "@tiptap/y-tiptap";
+import { prosemirrorJSONToYDoc, yDocToProsemirrorJSON } from "@tiptap/y-tiptap";
 import type { Configuration } from "@hocuspocus/server";
 import { applyUpdate, encodeStateAsUpdate, Doc } from "yjs";
 import {
@@ -97,6 +97,22 @@ function yDocFromState(state: Uint8Array): Doc {
   } catch {
     document.destroy();
     throw new InvalidYStateError();
+  }
+}
+
+export function documentContentFromYState(state: Uint8Array): DocumentContent {
+  const document = yDocFromState(state);
+  try {
+    const content = parseDocumentContent(
+      yDocToProsemirrorJSON(document, COLLABORATION_FRAGMENT),
+    );
+    if (!content) throw new InvalidYStateError();
+    return content;
+  } catch (error) {
+    if (error instanceof InvalidYStateError) throw error;
+    throw new InvalidYStateError();
+  } finally {
+    document.destroy();
   }
 }
 

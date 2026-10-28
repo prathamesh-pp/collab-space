@@ -21,6 +21,7 @@ export type WorkspaceMemberRecord = {
 
 export type WorkspaceMemberTransaction = {
   findRole(workspaceId: string, userId: string): Promise<string | null>;
+  findUserByEmail(email: string): Promise<{ id: string; name: string; email: string } | null>;
   findMember(workspaceId: string, userId: string): Promise<{
     userId: string;
     role: string;
@@ -32,6 +33,11 @@ export type WorkspaceMemberTransaction = {
     role: AssignableWorkspaceRole,
   ): Promise<void>;
   removeMember(workspaceId: string, userId: string): Promise<void>;
+  addMember(
+    workspaceId: string,
+    userId: string,
+    role: AssignableWorkspaceRole,
+  ): Promise<boolean>;
 };
 
 export type WorkspaceMembersRepository = {
@@ -53,6 +59,41 @@ export type WorkspaceMembersResult = {
 
 function failure(status: number, error: string): WorkspaceMembersResult {
   return { status, body: { error } };
+}
+
+export async function addWorkspaceMember(
+  repository: WorkspaceMembersRepository,
+  workspaceId: string,
+  actorId: string,
+  requestedEmail: unknown,
+  requestedRole: unknown,
+): Promise<WorkspaceMembersResult> {
+  const emailResult = z.string().trim().toLowerCase().pipe(z.email()).safeParse(requestedEmail);
+  const roleResult = assignableWorkspaceRoleSchema.safeParse(requestedRole);
+  if (!emailResult.success || !roleResult.success) {
+    return failure(400, "Enter a valid email and choose an editor, commenter, or viewer role.");
+  }
+
+  return repository.transaction(async (transaction) => {
+    const actorRole = await transaction.findRole(workspaceId, actorId);
+    if (!actorRole) return failure(404, "Workspace not found.");
+    if (actorRole !== "OWNER") {
+      return failure(403, "Only workspace owners can manage members.");
+    }
+
+    const user = await transaction.findUserByEmail(emailResult.data);
+    if (!user) return failure(404, "No account was found for that email.");
+
+    const existing = await transaction.findMember(workspaceId, user.id);
+    if (existing) return failure(409, "That user is already a workspace member.");
+
+    const added = await transaction.addMember(workspaceId, user.id, roleResult.data);
+    if (!added) return failure(409, "That user is already a workspace member.");
+    return {
+      status: 201,
+      body: { userId: user.id, name: user.name, email: user.email, role: roleResult.data },
+    };
+  });
 }
 
 export async function listWorkspaceMembers(
