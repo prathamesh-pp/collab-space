@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 530 164" fill="none">
+  <defs>
+    <linearGradient id="collabry-blue" x1="30" y1="48" x2="104" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102E70"/>
+      <stop offset="1" stop-color="#4C7FF4"/>
+    </linearGradient>
+    <linearGradient id="collabry-green" x1="65" y1="70" x2="134" y2="141" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#36B987"/>
+      <stop offset="1" stop-color="#69D6AA"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(0 0)">
+    <rect width="148" height="164" rx="23" fill="#F7F8FA"/>
+    <circle cx="75" cy="16" r="14" fill="url(#collabry-blue)"/>
+    <path d="M96 42 48 53c-9 2-15 9-15 19v38c0 10 7 15 17 13l32-8" stroke="url(#collabry-blue)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m51 72 28-7M51 86l21-5" stroke="url(#collabry-blue)" stroke-width="5" stroke-linecap="round"/>
+    <path d="m83 68 34-8c9-2 15 3 15 12v35c0 9-5 14-14 17l-31 8c-10 3-17-2-20-11l-3-10" stroke="url(#collabry-green)" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="m92 88 22-5M89 102l19-5" stroke="url(#collabry-green)" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="108" cy="148" r="13" fill="url(#collabry-green)"/>
+  </g>
+  <text x="153" y="111" fill="#F7F8FA" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="700" letter-spacing="-3.8" textLength="370" lengthAdjust="spacingAndGlyphs">Collabry</text>
+</svg>

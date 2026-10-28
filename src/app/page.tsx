@@ -3,8 +3,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import {
+  ArrowLeft,
   ArrowRight,
   Clock3,
+  Eye,
+  EyeOff,
   FileText,
   FolderOpen,
   LayoutDashboard,
@@ -29,6 +32,7 @@ import {
 } from "@/lib/use-recent-documents";
 import { closeDialogOnEscape } from "@/lib/dialog-accessibility";
 import { CollabryBrand, CollabryMark } from "@/components/collabry-brand";
+import { PublicLanding } from "./public-landing";
 
 type DocumentItem = {
   id: string;
@@ -433,9 +437,11 @@ export default function Home() {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [showAuth, setShowAuth] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [workspaceName, setWorkspaceName] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -582,6 +588,8 @@ export default function Home() {
       setUser(null);
       setWorkspaces([]);
       setAuthMode("login");
+      setShowAuth(false);
+      setError("");
     } catch {
       setError("Unable to connect to the server. Please try again.");
     } finally {
@@ -663,48 +671,63 @@ export default function Home() {
   }
 
   if (!user) {
+    if (!showAuth) {
+      return (
+        <PublicLanding
+          error={error}
+          onSignIn={() => {
+            setAuthMode("login");
+            setShowAuth(true);
+          }}
+          onGetStarted={() => {
+            setAuthMode("register");
+            setShowAuth(true);
+          }}
+        />
+      );
+    }
+
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f4f5f8] px-4 py-10 sm:px-6">
-        <section className="grid w-full max-w-5xl overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_24px_80px_-36px_rgba(15,23,42,0.3)] lg:grid-cols-[1fr_0.9fr]">
-          <div className="relative hidden min-h-[620px] flex-col justify-between overflow-hidden bg-[#202b4a] p-12 text-white lg:flex">
-            <div className="absolute -right-24 -top-20 h-80 w-80 rounded-full border border-white/10" />
-            <div className="absolute -right-4 top-16 h-56 w-56 rounded-full border border-white/10" />
-            <div className="absolute -bottom-36 -left-28 h-96 w-96 rounded-full bg-indigo-400/15 blur-3xl" />
+      <main className="auth-screen flex min-h-screen items-center justify-center px-4 py-6 sm:px-6 sm:py-10">
+        <section className="auth-card grid w-full max-w-6xl overflow-hidden rounded-3xl border border-white/70 bg-white shadow-[0_32px_100px_-48px_rgba(34,24,78,.48)] lg:grid-cols-[1.02fr_.98fr]">
+          <div className="auth-art-panel relative flex min-h-[250px] flex-col justify-between overflow-hidden p-6 text-white sm:p-8 lg:min-h-[680px] lg:p-12">
+            <div aria-hidden="true" className="auth-art-orbit auth-art-orbit-one" />
+            <div aria-hidden="true" className="auth-art-orbit auth-art-orbit-two" />
             <div className="relative flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-indigo-700">
-                <LayoutDashboard size={20} aria-hidden="true" />
-              </span>
-              <span className="text-lg font-semibold tracking-tight">Collabry</span>
+              <CollabryBrand inverse size="large" />
             </div>
-            <div className="relative max-w-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-indigo-200">
+            <div className="relative max-w-md py-5 lg:py-0">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-cyan-100 sm:text-xs">
                 A calmer place to work
               </p>
-              <h1 className="mt-5 text-4xl font-semibold leading-tight tracking-tight">
+              <h1 className="mt-3 text-2xl font-semibold leading-tight tracking-[-0.04em] sm:text-3xl lg:mt-5 lg:text-4xl">
                 Bring your team&apos;s best thinking together.
               </h1>
-              <p className="mt-5 text-base leading-7 text-slate-300">
+              <p className="mt-3 max-w-sm text-sm leading-6 text-violet-100/85 sm:text-base sm:leading-7 lg:mt-5">
                 Keep projects, notes, and important documents organized in one shared space.
               </p>
             </div>
-            <p className="relative text-xs text-slate-400">
+            <p className="relative hidden text-xs text-violet-100/65 lg:block">
               Thoughtful work, made a little simpler.
             </p>
           </div>
 
-          <div className="px-6 py-9 sm:px-10 sm:py-12 lg:px-12 lg:py-14">
-            <div className="mb-8 lg:hidden">
-              <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-700 text-white shadow-sm">
-                  <LayoutDashboard size={20} aria-hidden="true" />
-                </span>
-                <span className="text-lg font-semibold tracking-tight text-slate-900">
-                  Collabry
-                </span>
-              </div>
+          <div className="auth-form-panel px-6 py-7 sm:px-10 sm:py-10 lg:px-12 lg:py-14">
+            <button
+              type="button"
+              onClick={() => {
+                setShowAuth(false);
+                setError("");
+              }}
+              className="auth-back mb-6 inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-semibold text-slate-500 transition focus-visible:outline-2"
+            >
+              <ArrowLeft size={14} aria-hidden="true" /> Back to Collabry
+            </button>
+            <div className="auth-mobile-brand mb-6 lg:hidden">
+              <CollabryBrand size="medium" />
             </div>
             <div className="mb-8">
-              <p className="text-sm font-semibold text-indigo-700">
+              <p className="auth-kicker text-sm font-semibold">
                 {authMode === "login" ? "Welcome back" : "Get started"}
               </p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950">
@@ -713,11 +736,11 @@ export default function Home() {
               <p className="mt-2 text-sm leading-6 text-slate-500">
                 {authMode === "login"
                   ? "Pick up where you left off with your team."
-                  : "Set up a home for your team’s work."}
+                  : "Set up a home for your teamâ€™s work."}
               </p>
             </div>
 
-          <div className="mb-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1">
+          <div className="auth-mode-switch mb-6 grid grid-cols-2 rounded-xl bg-slate-100 p-1">
             <button
               type="button"
               aria-pressed={authMode === "login"}
@@ -753,7 +776,7 @@ export default function Home() {
           <form onSubmit={handleAuth} className="space-y-5">
             {authMode === "register" && (
               <div>
-                <label htmlFor="name" className="mb-2 block text-sm font-semibold text-slate-700">
+                <label htmlFor="name" className="auth-label mb-2 block text-sm font-semibold text-slate-700">
                   Full name
                 </label>
                 <input
@@ -765,13 +788,13 @@ export default function Home() {
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   placeholder="Your name"
-                  className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                  className="auth-input w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400"
                 />
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label htmlFor="email" className="auth-label mb-2 block text-sm font-semibold text-slate-700">
                 Email address
               </label>
               <input
@@ -782,27 +805,38 @@ export default function Home() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                className="auth-input w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="mb-2 block text-sm font-semibold text-slate-700">
+              <label htmlFor="password" className="auth-label mb-2 block text-sm font-semibold text-slate-700">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                autoComplete={authMode === "login" ? "current-password" : "new-password"}
-                aria-describedby={authMode === "register" ? "password-help" : undefined}
-                required
-                minLength={authMode === "register" ? 10 : 1}
-                maxLength={128}
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder={authMode === "register" ? "At least 10 characters" : "Your password"}
-                className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
-              />
+              <div className="auth-password-wrap relative">
+                <input
+                  id="password"
+                  type={passwordVisible ? "text" : "password"}
+                  autoComplete={authMode === "login" ? "current-password" : "new-password"}
+                  aria-describedby={authMode === "register" ? "password-help" : undefined}
+                  required
+                  minLength={authMode === "register" ? 10 : 1}
+                  maxLength={128}
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder={authMode === "register" ? "At least 10 characters" : "Your password"}
+                  className="auth-input w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400"
+                />
+                <button
+                  type="button"
+                  className="auth-password-toggle absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 text-slate-500 transition"
+                  aria-label={passwordVisible ? "Hide password" : "Show password"}
+                  aria-pressed={passwordVisible}
+                  onClick={() => setPasswordVisible((visible) => !visible)}
+                >
+                  {passwordVisible ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}
+                </button>
+              </div>
               {authMode === "register" && (
                 <p id="password-help" className="mt-2 text-xs leading-5 text-slate-500">
                   Use at least 10 characters and no more than 72 UTF-8 bytes.
@@ -811,7 +845,7 @@ export default function Home() {
             </div>
 
             {error && (
-              <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
+              <p role="alert" className="auth-error rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-800">
                 {error}
               </p>
             )}
@@ -819,7 +853,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={busy}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="auth-submit flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3.5 text-sm font-semibold text-white shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {busy
                 ? "Please wait..."
