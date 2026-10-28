@@ -28,6 +28,7 @@ import {
   useRecentDocuments,
 } from "@/lib/use-recent-documents";
 import { closeDialogOnEscape } from "@/lib/dialog-accessibility";
+import { CollabryBrand, CollabryMark } from "@/components/collabry-brand";
 
 type DocumentItem = {
   id: string;
@@ -836,47 +837,55 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f8fa] text-slate-900 lg:flex">
-      <aside className="hidden w-64 shrink-0 border-r border-slate-200/80 bg-white px-4 py-6 lg:flex lg:flex-col">
-        <Link href="/" className="mb-9 flex items-center gap-3 rounded-xl px-2 py-1">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-700 text-white shadow-sm">
-            <LayoutDashboard size={19} aria-hidden="true" />
-          </span>
-          <span className="text-base font-semibold tracking-tight">Collabry</span>
+    <main className="dashboard-app min-h-screen text-slate-900 lg:flex">
+      <aside className="dashboard-sidebar hidden w-[272px] shrink-0 border-r border-indigo-100/70 bg-white/90 px-4 py-6 backdrop-blur lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col">
+        <Link
+          href="/"
+          aria-label="Collabry dashboard home"
+          className="dashboard-brand-link mb-9 flex items-center gap-3 rounded-xl px-2 py-1"
+        >
+          <CollabryMark className="dashboard-brand-mark" size={36} />
+          <CollabryBrand className="dashboard-brand-wordmark" size="medium" />
         </Link>
-        <p className="mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
+        <p className="dashboard-sidebar-heading mb-2 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-slate-400">
           Workspace
         </p>
         <nav aria-label="Main navigation" className="space-y-1">
           <a
             href="#overview"
             aria-current="page"
-            className="flex items-center gap-3 rounded-xl bg-indigo-50 px-3 py-2.5 text-sm font-semibold text-indigo-800"
+            aria-label="Overview"
+            title="Overview"
+            className="dashboard-nav-item dashboard-nav-active flex items-center gap-3 rounded-xl bg-indigo-50 px-3 py-2.5 text-sm font-semibold text-indigo-800"
           >
             <LayoutDashboard size={17} aria-hidden="true" />
-            Overview
+            <span className="dashboard-nav-label">Overview</span>
           </a>
           <a
             href="#workspaces"
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-indigo-700"
+            aria-label="Your spaces"
+            title="Your spaces"
+            className="dashboard-nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-indigo-700"
           >
             <FolderOpen size={17} aria-hidden="true" />
-            Your spaces
+            <span className="dashboard-nav-label">Your spaces</span>
           </a>
           <a
             href="#recent-documents"
-            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-indigo-700"
+            aria-label="Recent documents"
+            title="Recent documents"
+            className="dashboard-nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900 focus-visible:outline-2 focus-visible:outline-indigo-700"
           >
             <Clock3 size={17} aria-hidden="true" />
-            Recent documents
+            <span className="dashboard-nav-label">Recent documents</span>
           </a>
         </nav>
-        <div className="mt-auto border-t border-slate-100 pt-4">
+        <div className="dashboard-account mt-auto border-t border-slate-100 pt-4">
           <div className="flex items-center gap-3 px-2">
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-800">
               {user.name.charAt(0).toUpperCase()}
             </span>
-            <div className="min-w-0 flex-1">
+            <div className="dashboard-account-details min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-slate-800">{user.name}</p>
               <p className="truncate text-xs text-slate-500">{user.email}</p>
             </div>
@@ -894,14 +903,11 @@ export default function Home() {
         </div>
       </aside>
 
-      <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/90 px-4 py-3 backdrop-blur sm:px-8 lg:px-10">
-          <div className="mx-auto flex max-w-6xl items-center justify-between">
+      <div className="dashboard-main-content min-w-0 flex-1">
+        <header className="dashboard-topbar sticky top-0 z-10 border-b border-indigo-100/70 bg-white/85 py-3 backdrop-blur-xl">
+          <div className="dashboard-page-container flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5 lg:hidden">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-700 text-white">
-                <LayoutDashboard size={18} aria-hidden="true" />
-              </span>
-              <span className="font-semibold tracking-tight">Collabry</span>
+              <CollabryBrand size="small" />
             </Link>
             <p className="hidden text-sm font-medium text-slate-500 lg:block">
               Workspace overview
@@ -950,29 +956,43 @@ export default function Home() {
           </a>
         </nav>
 
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-8 sm:py-10 lg:px-10">
-          <section id="overview" className="mb-9 flex flex-col gap-6 rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-white to-indigo-50/70 p-6 shadow-sm sm:flex-row sm:items-end sm:justify-between sm:p-8">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-indigo-700">
-                Your workspace
+        <div className="dashboard-page-container dashboard-page-content">
+          <section id="overview" className="dashboard-welcome relative mb-9 overflow-hidden rounded-[26px] border border-indigo-100 bg-gradient-to-br from-white via-[#fcfbff] to-[#f0efff] p-6 shadow-[0_20px_55px_-42px_rgba(67,56,202,0.48)] sm:p-8">
+            <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-indigo-200/35 blur-3xl" />
+            <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 right-1/3 h-48 w-48 rounded-full bg-coral-200/25 blur-3xl" />
+            <div className="dashboard-welcome-content relative flex min-w-0 flex-col gap-7 xl:flex-row xl:items-end xl:justify-between">
+            <div className="dashboard-welcome-copy min-w-0">
+              <p className="inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-white/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-700 shadow-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Your workspace
               </p>
-              <h1 className="mt-3 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
+              <h1 className="mt-4 text-3xl font-semibold tracking-[-0.045em] text-slate-950 sm:text-4xl">
                 Welcome back, {user.name.split(" ")[0]}
               </h1>
               <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
-                A clear view of the spaces and documents your team is working on.
+                Everything you and your team are working on, together in one place.
               </p>
-            </div>
-            <div className="flex shrink-0 items-center gap-3 rounded-xl border border-white bg-white/80 px-4 py-3 shadow-sm">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700">
-                <Users size={18} aria-hidden="true" />
-              </span>
-              <div>
-                <p className="text-lg font-semibold leading-5 text-slate-900">{workspaces.length}</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  {workspaces.length === 1 ? "workspace" : "workspaces"}
-                </p>
+              <div className="dashboard-welcome-actions mt-6 flex flex-wrap gap-2.5">
+                <button type="button" onClick={() => document.getElementById("workspace-name")?.focus()} className="dashboard-primary-action inline-flex min-h-10 items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold text-white shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2">
+                  <Plus size={15} /> Create a space
+                </button>
+                <a href="#workspaces" className="dashboard-secondary-action inline-flex min-h-10 items-center gap-2 rounded-xl border px-4 py-2 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2">
+                  Browse workspaces <ArrowRight size={14} />
+                </a>
               </div>
+            </div>
+            <div role="group" aria-label="Workspace summary" className="dashboard-stats-grid grid min-w-0 grid-cols-3 gap-2 sm:gap-3 xl:w-[390px] xl:shrink-0">
+              {[
+                { label: "Workspaces", value: workspaces.length, icon: FolderOpen, accent: "dashboard-stat-violet" },
+                { label: "Documents", value: authorizedDocuments.length, icon: FileText, accent: "dashboard-stat-cyan" },
+                { label: "Recent", value: recentDocuments.length, icon: Clock3, accent: "dashboard-stat-coral" },
+              ].map(({ label, value, icon: Icon, accent }) => (
+                <div key={label} className={`dashboard-stat ${accent} rounded-2xl border p-3 sm:p-4`}>
+                  <span className="dashboard-stat-icon flex h-8 w-8 items-center justify-center rounded-xl"><Icon size={15} aria-hidden="true" /></span>
+                  <p className="dashboard-stat-number mt-3 text-xl font-semibold tracking-tight">{value}</p>
+                  <p className="dashboard-stat-label mt-0.5 text-[10px] font-medium sm:text-xs">{label}</p>
+                </div>
+              ))}
+            </div>
             </div>
           </section>
 
@@ -985,30 +1005,30 @@ export default function Home() {
           <section
             id="recent-documents"
             aria-labelledby="recent-documents-heading"
-            className="mb-9 scroll-mt-24"
+            className="dashboard-recent-section mb-9 scroll-mt-24"
           >
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.14em] text-indigo-700">
+                <p className="dashboard-section-kicker text-xs font-bold uppercase tracking-[0.14em]">
                   Pick up where you left off
                 </p>
                 <h2
                   id="recent-documents-heading"
-                  className="mt-1 text-xl font-semibold tracking-tight text-slate-950"
+                  className="mt-1 text-2xl font-semibold tracking-[-0.035em] text-slate-950 sm:text-[28px]"
                 >
                   Recent documents
                 </h2>
               </div>
               {recentDocuments.length > 0 && (
-                <span className="text-xs text-slate-500">
+                <span className="dashboard-saved-note text-xs">
                   Saved in this browser
                 </span>
               )}
             </div>
             {recentDocuments.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-7 sm:px-6">
+              <div className="dashboard-recent-empty rounded-2xl border px-5 py-7 sm:px-6">
                 <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+                  <span className="dashboard-empty-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
                     <Clock3 size={18} aria-hidden="true" />
                   </span>
                   <div>
@@ -1023,15 +1043,15 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {recentDocuments.map(({ document, openedAt }) => (
+              <ul className="dashboard-recent-grid grid gap-3">
+                {recentDocuments.map(({ document, openedAt }, index) => (
                   <li key={document.id}>
                     <Link
                       href={`/documents/${document.id}`}
                       onClick={() => handleDocumentOpen(document.id)}
-                      className="group flex h-full min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+                      className={`dashboard-recent-card dashboard-recent-card-${index % 3} group flex h-full min-w-0 items-center gap-3 rounded-2xl border p-4 transition focus-visible:outline-2 focus-visible:outline-offset-2`}
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700 transition group-hover:bg-indigo-100">
+                      <span className="dashboard-recent-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition">
                         <FileText size={18} aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -1041,7 +1061,7 @@ export default function Home() {
                         <span className="mt-1 block truncate text-xs text-slate-500">
                           {document.workspaceName}
                         </span>
-                        <span className="mt-1.5 block text-[11px] text-slate-400">
+                        <span className="dashboard-recent-time mt-1.5 block text-[11px]">
                           Opened{" "}
                           {new Date(openedAt).toLocaleDateString(undefined, {
                             month: "short",
@@ -1052,7 +1072,7 @@ export default function Home() {
                       <ArrowRight
                         size={16}
                         aria-hidden="true"
-                        className="shrink-0 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-indigo-600"
+                        className="dashboard-recent-arrow shrink-0 transition group-hover:translate-x-0.5"
                       />
                     </Link>
                   </li>
@@ -1061,19 +1081,19 @@ export default function Home() {
             )}
           </section>
 
-          <section className="mb-9 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+          <section className="dashboard-create-workspace mb-9 rounded-[22px] border p-5 sm:p-6">
             <div className="mb-4 flex items-start gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+              <span className="dashboard-create-icon flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
                 <Plus size={18} aria-hidden="true" />
               </span>
               <div>
-                <h2 className="text-sm font-semibold text-slate-900">Create a workspace</h2>
-                <p className="mt-1 text-sm text-slate-500">
+                <h2 className="text-base font-semibold tracking-[-0.02em] text-slate-900">Create a workspace</h2>
+                <p className="mt-1 text-sm leading-6 text-slate-600">
                   Start a dedicated space for a project or team.
                 </p>
               </div>
             </div>
-            <form onSubmit={createWorkspace} className="flex flex-col gap-3 sm:flex-row">
+            <form onSubmit={createWorkspace} className="dashboard-create-form flex min-w-0 flex-col gap-3 sm:flex-row">
               <label htmlFor="workspace-name" className="sr-only">Workspace name</label>
               <input
                 id="workspace-name"
@@ -1083,12 +1103,12 @@ export default function Home() {
                 minLength={2}
                 maxLength={60}
                 required
-                className="min-w-0 flex-1 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                className="dashboard-create-input min-w-0 flex-1 rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400"
               />
               <button
                 type="submit"
                 disabled={busy}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+                className="dashboard-create-submit inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <Plus size={17} aria-hidden="true" />
                 New workspace
@@ -1098,7 +1118,7 @@ export default function Home() {
 
           <section
             aria-label="Search workspaces and documents"
-            className="mb-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5"
+            className="dashboard-search-card mb-8 rounded-2xl border p-4 sm:p-5"
           >
             <label htmlFor="dashboard-search" className="sr-only">
               Search workspaces and documents
@@ -1194,7 +1214,7 @@ export default function Home() {
                 {searchResults.workspaces.map((workspace) => (
                   <section
                     key={workspace.id}
-                    className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
+                    className="dashboard-workspace-card overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 p-5 sm:flex-nowrap sm:p-6">
                       <div className="flex min-w-0 items-start gap-3">
