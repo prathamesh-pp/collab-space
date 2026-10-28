@@ -1266,8 +1266,8 @@ export default function DocumentEditor({
   const titleChanged = document !== null && title.trim() !== document.title;
 
   return (
-    <main className="min-h-screen bg-[#f7f8fa] text-slate-900">
-      <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/95 backdrop-blur">
+    <main className="document-app min-h-screen bg-[radial-gradient(ellipse_at_90%_0%,rgba(224,221,255,0.35),transparent_34rem),#f7f7fc] text-slate-900">
+      <header className="document-topbar sticky top-0 z-20 border-b border-indigo-100/70 bg-white/90 shadow-[0_4px_18px_-16px_rgba(30,41,59,0.45)] backdrop-blur-xl">
         <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-7">
           <Link
             href="/"
@@ -1278,13 +1278,15 @@ export default function DocumentEditor({
           </Link>
           <div className="flex min-w-0 items-center gap-2 text-sm text-slate-500">
             <span className="hidden text-slate-300 sm:inline">/</span>
-            <FileText size={16} className="shrink-0 text-indigo-700" aria-hidden="true" />
-            <span className="truncate">{document?.title || "Document"}</span>
+            <span className="hidden max-w-[12rem] truncate text-xs font-medium text-slate-400 sm:inline">{document?.workspace.name}</span>
+            <span className="hidden text-slate-300 sm:inline">/</span>
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700"><FileText size={15} aria-hidden="true" /></span>
+            <span className="max-w-[10rem] truncate text-xs font-semibold text-slate-700 sm:max-w-[18rem] sm:text-sm">{document?.title || "Document"}</span>
           </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-4 py-7 sm:px-7 sm:py-10">
+      <div className="document-app-content mx-auto max-w-6xl px-4 py-7 sm:px-7 sm:py-10">
         {loading ? (
           <div role="status" className="mx-auto max-w-4xl animate-pulse rounded-2xl border border-slate-200 bg-white p-7 shadow-sm sm:p-10">
             <div className="h-3 w-28 rounded bg-slate-100" />
@@ -1314,13 +1316,15 @@ export default function DocumentEditor({
           </section>
         ) : document ? (
           <>
-            <div className="mb-7 flex flex-col gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-7">
+            <div className="document-title-card relative mb-7 flex flex-col gap-5 overflow-hidden rounded-[24px] border border-indigo-100/80 bg-gradient-to-br from-white via-white to-indigo-50/65 p-5 shadow-[0_16px_50px_-42px_rgba(67,56,202,0.42)] sm:flex-row sm:items-center sm:justify-between sm:p-7">
+              <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-24 h-56 w-56 rounded-full bg-indigo-200/30 blur-3xl" />
               <div className="min-w-0 flex-1">
-                <p className="mb-3 flex items-center gap-2 text-xs font-semibold text-indigo-800">
-                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-indigo-50">
+                <p className="relative mb-3 flex flex-wrap items-center gap-2 text-xs font-semibold text-indigo-800">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-md bg-white shadow-sm ring-1 ring-indigo-100">
                     <FileText size={13} aria-hidden="true" />
                   </span>
-                  {document.workspace.name}
+                  <span>{document.workspace.name}</span>
+                  {role && <span className="rounded-full border border-indigo-100 bg-white/80 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-slate-500">{role.toLowerCase()}</span>}
                 </p>
                 <label className="sr-only" htmlFor="document-title">
                   Document title
@@ -1337,7 +1341,7 @@ export default function DocumentEditor({
                   }}
                   disabled={!editable}
                   maxLength={120}
-                  className="w-full min-w-0 rounded-md border-0 bg-transparent p-0 text-3xl font-semibold tracking-tight text-slate-950 outline-none placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-indigo-300 sm:text-4xl disabled:text-slate-800"
+                  className="relative w-full min-w-0 rounded-md border-0 bg-transparent p-0 text-3xl font-semibold tracking-[-0.045em] text-slate-950 outline-none placeholder:text-slate-400 focus-visible:ring-2 focus-visible:ring-indigo-300 sm:text-4xl disabled:text-slate-800"
                 />
                 <p className="mt-2 text-sm text-slate-500">
                   {editable ? "A space for your ideas and notes" : "Read-only access"}
@@ -1390,7 +1394,7 @@ export default function DocumentEditor({
               </p>
             )}
 
-            <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_38px_-28px_rgba(15,23,42,0.32)]">
+            <section className="document-editor-card overflow-hidden rounded-[22px] border border-slate-200/90 bg-white shadow-[0_24px_65px_-48px_rgba(30,41,59,0.42)] ring-1 ring-white/70">
               {editorMode === "collaborative" ? (
                 <CollaborativeRichTextEditor
                   key={document.id}

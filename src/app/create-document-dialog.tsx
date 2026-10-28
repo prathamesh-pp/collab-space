@@ -61,7 +61,7 @@ export function CreateDocumentDialog({
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose();
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-transparent p-0 text-slate-900 backdrop:bg-slate-950/35 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[min(32rem,calc(100dvh-3rem))] sm:w-[min(30rem,calc(100vw-3rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
+      className="create-document-dialog fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-transparent p-0 text-slate-900 backdrop:bg-slate-950/35 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[min(32rem,calc(100dvh-3rem))] sm:w-[min(30rem,calc(100vw-3rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
     >
       <section className="flex h-full max-h-full flex-col overflow-y-auto bg-[#f7f8fa] shadow-2xl sm:rounded-2xl">
         <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-5 py-5 sm:px-6">

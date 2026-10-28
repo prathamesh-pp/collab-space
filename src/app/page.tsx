@@ -236,7 +236,7 @@ function WorkspaceMembersDialog({
       onKeyDown={(event) => {
         closeDialogOnEscape(event, onClose);
       }}
-      className="fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-transparent p-0 text-slate-900 backdrop:bg-slate-950/35 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[min(44rem,calc(100dvh-3rem))] sm:w-[min(44rem,calc(100vw-3rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
+      className="workspace-members-dialog fixed inset-0 m-0 h-dvh max-h-none w-full max-w-none bg-transparent p-0 text-slate-900 backdrop:bg-slate-950/35 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:h-auto sm:max-h-[min(44rem,calc(100dvh-3rem))] sm:w-[min(44rem,calc(100vw-3rem))] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-2xl"
     >
       <section className="flex h-full max-h-full flex-col overflow-hidden bg-[#f7f8fa] shadow-2xl sm:rounded-2xl">
         <header className="flex items-start justify-between gap-4 border-b border-slate-200 bg-white px-5 py-5 sm:px-6">
@@ -736,7 +736,7 @@ export default function Home() {
               <p className="mt-2 text-sm leading-6 text-slate-500">
                 {authMode === "login"
                   ? "Pick up where you left off with your team."
-                  : "Set up a home for your teamâ€™s work."}
+                  : "Set up a home for your team’s work."}
               </p>
             </div>
 
