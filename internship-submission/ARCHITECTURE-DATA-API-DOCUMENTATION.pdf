@@ -1,0 +1,491 @@
+%PDF-1.4
+%ту╧╙
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R 13 0 R 15 0 R] /Count 5 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 7732 >>
+stream
+q 0.100 0.180 0.310 rg BT /F2 22 Tf 48.0 744.0 Td (Collabry Architecture, Data Model, and API) Tj ET Q
+q 0.41 0.36 0.82 RG 2.5 w 48 713 m 564 713 l S Q
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 687.0 Td (Verification boundary) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 661.0 Td (This document describes the checked-in implementation. The default test suite and production build pass locally,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 648.0 Td (but no PostgreSQL integration, migration, production deployment, or browser-based two-user collaboration test) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 635.0 Td (has passed. The version-history migration is included but unapplied to the previously checked test database.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 622.0 Td (Keep live collaboration disabled in production until its database persistence and WebSocket service are) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 609.0 Td (verified.) Tj ET Q
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 587.0 Td (System architecture) Tj ET Q
+q 0.310 0.360 0.640 rg BT /F2 8 Tf 48.0 561.0 Td (REQUEST PATH) Tj ET Q
+q 0.92 0.95 0.98 rg 50 489 145 48 re f 0.56 0.63 0.72 RG 0.7 w 50 489 145 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 58.0 517.0 Td (Browser) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 58.0 501.0 Td (Next.js UI) Tj ET Q
+q 0.92 0.95 0.98 rg 235 489 160 48 re f 0.56 0.63 0.72 RG 0.7 w 235 489 160 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 243.0 517.0 Td (Next.js routes) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 243.0 501.0 Td (Session + roles) Tj ET Q
+q 0.92 0.95 0.98 rg 440 489 130 48 re f 0.56 0.63 0.72 RG 0.7 w 440 489 130 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 448.0 517.0 Td (Prisma) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 448.0 501.0 Td (Data access) Tj ET Q
+q 0.92 0.95 0.98 rg 585 489 85 48 re f 0.56 0.63 0.72 RG 0.7 w 585 489 85 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 593.0 517.0 Td (PostgreSQL) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 593.0 501.0 Td (Records) Tj ET Q
+q 0.39 0.35 0.78 RG 1.4 w 199 513 m 230 513 l S Q
+q 0.390 0.350 0.780 rg BT /F2 10 Tf 208.0 517.0 Td (>) Tj ET Q
+q 0.39 0.35 0.78 RG 1.4 w 395 513 m 426 513 l S Q
+q 0.390 0.350 0.780 rg BT /F2 10 Tf 404.0 517.0 Td (>) Tj ET Q
+q 0.39 0.35 0.78 RG 1.4 w 570 513 m 601 513 l S Q
+q 0.390 0.350 0.780 rg BT /F2 10 Tf 579.0 517.0 Td (>) Tj ET Q
+q 0.310 0.360 0.640 rg BT /F2 8 Tf 48.0 449.0 Td (OPTIONAL COLLABORATION PATH) Tj ET Q
+q 0.94 0.93 0.99 rg 50 371 145 48 re f 0.63 0.58 0.8 RG 0.7 w 50 371 145 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 58.0 399.0 Td (Browser) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 58.0 383.0 Td (Ticket + WebSocket) Tj ET Q
+q 0.94 0.93 0.99 rg 235 371 160 48 re f 0.63 0.58 0.8 RG 0.7 w 235 371 160 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 243.0 399.0 Td (Hocuspocus) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 243.0 383.0 Td (Auth + persistence) Tj ET Q
+q 0.94 0.93 0.99 rg 440 371 130 48 re f 0.63 0.58 0.8 RG 0.7 w 440 371 130 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 448.0 399.0 Td (Yjs) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 448.0 383.0 Td (Document + presence) Tj ET Q
+q 0.94 0.93 0.99 rg 585 371 85 48 re f 0.63 0.58 0.8 RG 0.7 w 585 371 85 48 re S Q
+q 0.140 0.200 0.290 rg BT /F2 9 Tf 593.0 399.0 Td (Redis) Tj ET Q
+q 0.310 0.370 0.480 rg BT /F1 7 Tf 593.0 383.0 Td (Multi-instance) Tj ET Q
+q 0.39 0.35 0.78 RG 1.4 w 199 395 m 230 395 l S Q
+q 0.390 0.350 0.780 rg BT /F2 10 Tf 208.0 399.0 Td (>) Tj ET Q
+q 0.39 0.35 0.78 RG 1.4 w 395 395 m 426 395 l S Q
+q 0.390 0.350 0.780 rg BT /F2 10 Tf 404.0 399.0 Td (>) Tj ET Q
+q 0.39 0.35 0.78 RG 1.4 w 570 395 m 601 395 l S Q
+q 0.390 0.350 0.780 rg BT /F2 10 Tf 579.0 399.0 Td (>) Tj ET Q
+q 0.270 0.330 0.430 rg BT /F3 8 Tf 48.0 331.0 Td (Hocuspocus also persists encoded Yjs state through Prisma to PostgreSQL.) Tj ET Q
+q 0.320 0.340 0.620 rg BT /F2 11 Tf 48.0 303.0 Td (Responsibilities) Tj ET Q
+q 0.15 0.23 0.36 rg 48 263 145 22 re f 0.64 0.69 0.76 RG 0.7 w 48 263 145 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 8 Tf 53.0 275.0 Td (Component) Tj ET Q
+q 0.15 0.23 0.36 rg 193 263 371 22 re f 0.64 0.69 0.76 RG 0.7 w 193 263 371 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 8 Tf 198.0 275.0 Td (Responsibility) Tj ET Q
+q 0.96 0.97 0.99 rg 48 230.0 145 27.0 re f 0.64 0.69 0.76 RG 0.7 w 48 230.0 145 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 53.0 247.0 Td (Next.js browser UI) Tj ET Q
+q 0.96 0.97 0.99 rg 193 230.0 371 27.0 re f 0.64 0.69 0.76 RG 0.7 w 193 230.0 371 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 247.0 Td (Registration/login forms, dashboard, workspaces, document editing, comments, access) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 237.5 Td (controls, and optional collaboration client.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 197.0 145 27.0 re f 0.64 0.69 0.76 RG 0.7 w 48 197.0 145 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 53.0 214.0 Td (Next.js route handlers) Tj ET Q
+q 0.91 0.94 0.97 rg 193 197.0 371 27.0 re f 0.64 0.69 0.76 RG 0.7 w 193 197.0 371 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 214.0 Td (Validate JSON inputs, resolve the session cookie, enforce workspace membership and role) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 204.5 Td (permissions, call domain/repository code, and return sanitized JSON errors.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 164.0 145 27.0 re f 0.64 0.69 0.76 RG 0.7 w 48 164.0 145 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 53.0 181.0 Td (Prisma/PostgreSQL) Tj ET Q
+q 0.96 0.97 0.99 rg 193 164.0 371 27.0 re f 0.64 0.69 0.76 RG 0.7 w 193 164.0 371 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 181.0 Td (Store users, sessions, workspaces, memberships, documents, comments, version snapshots, and) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 171.5 Td (collaboration tickets. The database path has not been integration-tested in this handoff.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 131.0 145 27.0 re f 0.64 0.69 0.76 RG 0.7 w 48 131.0 145 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 53.0 148.0 Td (TipTap/ProseMirror) Tj ET Q
+q 0.91 0.94 0.97 rg 193 131.0 371 27.0 re f 0.64 0.69 0.76 RG 0.7 w 193 131.0 371 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 148.0 Td (Render and edit supported rich-text JSON in the conventional HTTP-save path; bind to Yjs in) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 138.5 Td (the optional live collaboration path.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 88.5 145 36.5 re f 0.64 0.69 0.76 RG 0.7 w 48 88.5 145 36.5 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 53.0 115.0 Td (Hocuspocus) Tj ET Q
+q 0.96 0.97 0.99 rg 193 88.5 371 36.5 re f 0.64 0.69 0.76 RG 0.7 w 193 88.5 371 36.5 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 115.0 Td (Separate long-running WebSocket process that authenticates one-use tickets, loads and stores) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 105.5 Td (Yjs state through the collaboration persistence hooks, publishes presence, and periodically) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 96.0 Td (rechecks connection authorization.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 55.5 145 27.0 re f 0.64 0.69 0.76 RG 0.7 w 48 55.5 145 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 53.0 72.5 Td (Redis extension) Tj ET Q
+q 0.91 0.94 0.97 rg 193 55.5 371 27.0 re f 0.64 0.69 0.76 RG 0.7 w 193 55.5 371 27.0 re S Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 72.5 Td (Optional multi-instance Yjs update and Awareness propagation plus store-hook coordination.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 8 Tf 198.0 63.0 Td (Redis is not the durable document store.) Tj ET Q
+q 0.78 0.81 0.86 RG 0.5 w 48 34 m 564 34 l S Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 48 21 Td (Collabry | Architecture and API) Tj ET Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 540 21 Td (1) Tj ET Q
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 6487 >>
+stream
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 738.0 Td (User and document flows) Tj ET Q
+q 0.320 0.340 0.620 rg BT /F2 11 Tf 48.0 709.0 Td (Authentication and authorization) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 691.0 Td (1. Registration validates name, email, and password, including the bcrypt 72-byte UTF-8 limit.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 678.0 Td (2. The route hashes the password, then creates the user, personal workspace, owner membership, and starter) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 665.0 Td (document in a database transaction.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 652.0 Td (3. A random 256-bit session token is returned only in the collab_session cookie. PostgreSQL stores its SHA-256) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 639.0 Td (hash with a 30-day expiry.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 626.0 Td (4. Protected API routes hash the cookie token for lookup, require an unexpired session, and check workspace) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 613.0 Td (membership before returning or changing protected records.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 600.0 Td (5. Role checks are server-side: Owner and Editor can edit documents; Owner, Editor, and Commenter can comment;) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 56.0 587.0 Td (Viewer is read-only. Only Owners manage memberships, and the final Owner cannot be demoted or removed.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 571.0 Td (Logout deletes the session row and expires the cookie. Collaboration connections carry session, user, workspace,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 558.0 Td (and document identity in server-created context and revalidate access. A removed member, expired session, or) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 545.0 Td (demoted editor is disconnected by the collaboration authorization hooks.) Tj ET Q
+q 0.320 0.340 0.620 rg BT /F2 11 Tf 48.0 526.0 Td (Conventional document editing) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 508.0 Td (The document API returns validated TipTap JSON and a contentRevision. The editor sends JSON plus) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 495.0 Td (expectedRevision to the content endpoint. The server bounds and validates the supported document schema and uses) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 482.0 Td (compare-and-set revision updates. A stale write receives 409 and must reload rather than overwriting a) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 469.0 Td (concurrent save. This HTTP JSON path is the standard app path while live collaboration is disabled.) Tj ET Q
+q 0.320 0.340 0.620 rg BT /F2 11 Tf 48.0 450.0 Td (Comments and version history) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 432.0 Td (Workspace members can list comments. Owner, Editor, and Commenter can add, resolve, or reopen comments; only the) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 419.0 Td (author may delete a comment. Version history is explicit JSON snapshots, not a snapshot on every autosave. Owner) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 406.0 Td (and Editor can create and restore snapshots. Restore preserves the current content as Before restore, increments) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 393.0 Td (the revision, and guards against concurrent JSON/Yjs state changes. Version operations return 409 while live) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 380.0 Td (collaboration is configured because active documents are not yet coordinated with snapshot restore. The added) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 367.0 Td (DocumentVersion.content column requires the included migration before history routes work against a database.) Tj ET Q
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 345.0 Td (Real-time collaboration) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 319.0 Td (The optional client creates a Yjs document and connects the Hocuspocus provider to the configured WebSocket URL.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 306.0 Td (Before connection, the browser requests a short-lived, single-use ticket from the same-origin Next.js endpoint.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 293.0 Td (The ticket is tied to the current session and document; only its hash is stored. Hocuspocus consumes it) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 280.0 Td (transactionally and checks that the session is active and the user remains an Owner or Editor of the document's) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 267.0 Td (workspace.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 251.0 Td (Yjs CRDT updates allow independent edits to converge without replacing the whole document with one user's copy.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 238.0 Td (Hocuspocus carries updates over WebSockets. Awareness transports ephemeral presence such as collaborator) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 225.0 Td (identity and cursor/selection state; the server overwrites client-provided identity with the authenticated) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 212.0 Td (user's name and deterministic color. Presence is separate from persisted document data.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 196.0 Td (For multiple Hocuspocus instances, the official @hocuspocus/extension-redis publishes document updates and) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 183.0 Td (Awareness and coordinates the store hook. Redis Pub/Sub is not durable; PostgreSQL is intended to remain the) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 170.0 Td (persistence layer for encoded Yjs state. On Redis coordination errors, the implementation closes affected) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 157.0 Td (connections and rejects messages until coordination recovers. A previous local two-instance Redis run passed) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 144.0 Td (with in-memory document persistence; it did not verify PostgreSQL durability, a full Redis service outage,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 131.0 Td (browser behavior, or deployment. No collaboration service is deployed.) Tj ET Q
+q 0.78 0.81 0.86 RG 0.5 w 48 34 m 564 34 l S Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 48 21 Td (Collabry | Architecture and API) Tj ET Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 540 21 Td (2) Tj ET Q
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 13233 >>
+stream
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 738.0 Td (Data model) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 712.0 Td (The following entities and fields reflect prisma/schema.prisma:) Tj ET Q
+q 0.15 0.23 0.36 rg 48 674 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 674 132 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 7.25 Tf 53.0 686.0 Td (Entity) Tj ET Q
+q 0.15 0.23 0.36 rg 180 674 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 674 148 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 7.25 Tf 185.0 686.0 Td (Important fields) Tj ET Q
+q 0.15 0.23 0.36 rg 328 674 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 674 236 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 7.25 Tf 333.0 686.0 Td (Relationships and constraints) Tj ET Q
+q 0.96 0.97 0.99 rg 48 642.6 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 642.6 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 658.0 Td (User) Tj ET Q
+q 0.96 0.97 0.99 rg 180 642.6 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 642.6 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 658.0 Td (id, unique email, name, passwordHash,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 649.3 Td (createdAt) Tj ET Q
+q 0.96 0.97 0.99 rg 328 642.6 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 642.6 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 658.0 Td (Has sessions, memberships, created workspaces, comments,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 649.3 Td (versions, and collaboration tickets.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 611.2 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 611.2 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 626.6 Td (Session) Tj ET Q
+q 0.91 0.94 0.97 rg 180 611.2 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 611.2 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 626.6 Td (id, unique tokenHash, userId,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 617.9 Td (expiresAt, createdAt) Tj ET Q
+q 0.91 0.94 0.97 rg 328 611.2 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 611.2 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 626.6 Td (Belongs to User; indexed by \(userId, expiresAt\); may be linked) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 617.9 Td (to collaboration tickets.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 583.2 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 583.2 132 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 595.2 Td (Workspace) Tj ET Q
+q 0.96 0.97 0.99 rg 180 583.2 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 583.2 148 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 595.2 Td (id, name, createdById, timestamps) Tj ET Q
+q 0.96 0.97 0.99 rg 328 583.2 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 583.2 236 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 595.2 Td (Belongs to its creator; has memberships and documents.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 551.8000000000001 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 551.8000000000001 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 567.2 Td (WorkspaceMember) Tj ET Q
+q 0.91 0.94 0.97 rg 180 551.8000000000001 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 551.8000000000001 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 567.2 Td (id, workspaceId, userId, role,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 558.5 Td (createdAt) Tj ET Q
+q 0.91 0.94 0.97 rg 328 551.8000000000001 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 551.8000000000001 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 567.2 Td (Joins Workspace and User; unique \(workspaceId, userId\); role is) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 558.5 Td (Owner, Editor, Commenter, or Viewer.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 511.70000000000005 132 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 48 511.70000000000005 132 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 535.8 Td (Document) Tj ET Q
+q 0.96 0.97 0.99 rg 180 511.70000000000005 148 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 180 511.70000000000005 148 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 535.8 Td (id, workspaceId, title, nullable JSON) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 527.1 Td (content, contentRevision, nullable) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 518.4 Td (binary yState, timestamps) Tj ET Q
+q 0.96 0.97 0.99 rg 328 511.70000000000005 236 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 328 511.70000000000005 236 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 535.8 Td (Belongs to Workspace; has comments, versions, and tickets;) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 527.1 Td (indexed by \(workspaceId, updatedAt\).) Tj ET Q
+q 0.91 0.94 0.97 rg 48 480.30000000000007 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 480.30000000000007 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 495.7 Td (Comment) Tj ET Q
+q 0.91 0.94 0.97 rg 180 480.30000000000007 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 480.30000000000007 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 495.7 Td (id, documentId, userId, text, optional) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 487.0 Td (JSON anchor, resolvedAt, timestamps) Tj ET Q
+q 0.91 0.94 0.97 rg 328 480.30000000000007 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 480.30000000000007 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 495.7 Td (Belongs to Document and author User; indexed by \(documentId,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 487.0 Td (createdAt\).) Tj ET Q
+q 0.96 0.97 0.99 rg 48 440.20000000000005 132 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 48 440.20000000000005 132 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 464.3 Td (DocumentVersion) Tj ET Q
+q 0.96 0.97 0.99 rg 180 440.20000000000005 148 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 180 440.20000000000005 148 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 464.3 Td (id, documentId, userId, label,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 455.6 Td (nullable binary yState, nullable JSON) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 446.9 Td (content, createdAt) Tj ET Q
+q 0.96 0.97 0.99 rg 328 440.20000000000005 236 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 328 440.20000000000005 236 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 464.3 Td (Belongs to Document and author User; indexed by \(documentId,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 455.6 Td (createdAt\). The additive migration makes legacy yState nullable) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 446.9 Td (and adds JSON content.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 400.1 132 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 48 400.1 132 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 424.2 Td (CollaborationTicket) Tj ET Q
+q 0.91 0.94 0.97 rg 180 400.1 148 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 180 400.1 148 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 424.2 Td (id, unique tokenHash, documentId,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 415.5 Td (userId, optional sessionId, expiresAt,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 406.8 Td (consumedAt, createdAt) Tj ET Q
+q 0.91 0.94 0.97 rg 328 400.1 236 34.099999999999994 re f 0.64 0.69 0.76 RG 0.7 w 328 400.1 236 34.099999999999994 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 424.2 Td (Belongs to Document and User, optionally Session; indexed by) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 415.5 Td (expiry and session.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 391.1 Td (Prisma relations use cascading deletes. This schema description is static documentation, not evidence of a live) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 378.1 Td (database schema or migration state.) Tj ET Q
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 356.1 Td (API overview) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 330.1 Td (All endpoints use JSON unless noted. Protected routes require the collab_session cookie. Typical errors are JSON) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 317.1 Td ({ "error": "..." }; unauthenticated requests return 401, nonmembers are generally hidden with 404, and) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 304.1 Td (insufficient roles receive 403. Validation failures return 400; stale revisions, duplicate registration, or) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 291.1 Td (forbidden concurrent operations use 409 where specified.) Tj ET Q
+q 0.15 0.23 0.36 rg 48 253.10000000000002 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 253.10000000000002 132 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 7.25 Tf 53.0 265.1 Td (Method and path) Tj ET Q
+q 0.15 0.23 0.36 rg 180 253.10000000000002 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 253.10000000000002 148 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 7.25 Tf 185.0 265.1 Td (Purpose) Tj ET Q
+q 0.15 0.23 0.36 rg 328 253.10000000000002 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 253.10000000000002 236 22 re S Q
+q 1.000 1.000 1.000 rg BT /F2 7.25 Tf 333.0 265.1 Td (Authorization / behavior) Tj ET Q
+q 0.96 0.97 0.99 rg 48 221.70000000000002 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 221.70000000000002 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 237.1 Td (POST /api/auth/register) Tj ET Q
+q 0.96 0.97 0.99 rg 180 221.70000000000002 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 221.70000000000002 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 237.1 Td (Create account and starter) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 228.4 Td (workspace/document.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 221.70000000000002 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 221.70000000000002 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 237.1 Td (Public; 201, validation 400, duplicate email 409. Sets session) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 228.4 Td (cookie.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 193.70000000000002 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 193.70000000000002 132 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 205.7 Td (POST /api/auth/login) Tj ET Q
+q 0.91 0.94 0.97 rg 180 193.70000000000002 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 193.70000000000002 148 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 205.7 Td (Authenticate and set session cookie.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 193.70000000000002 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 193.70000000000002 236 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 205.7 Td (Public; invalid credentials 401.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 165.70000000000002 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 165.70000000000002 132 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 177.7 Td (POST /api/auth/logout) Tj ET Q
+q 0.96 0.97 0.99 rg 180 165.70000000000002 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 165.70000000000002 148 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 177.7 Td (Revoke session and clear cookie.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 165.70000000000002 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 165.70000000000002 236 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 177.7 Td (Uses current cookie; returns { "ok": true }.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 137.70000000000002 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 137.70000000000002 132 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 149.7 Td (GET /api/auth/me) Tj ET Q
+q 0.91 0.94 0.97 rg 180 137.70000000000002 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 137.70000000000002 148 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 149.7 Td (Return current public user.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 137.70000000000002 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 137.70000000000002 236 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 149.7 Td (Session required; otherwise 401.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 106.30000000000001 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 106.30000000000001 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 121.7 Td (GET /api/workspaces) Tj ET Q
+q 0.96 0.97 0.99 rg 180 106.30000000000001 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 106.30000000000001 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 121.7 Td (List caller's workspaces and) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 113.0 Td (summaries.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 106.30000000000001 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 106.30000000000001 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 121.7 Td (Session required; membership-scoped.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 74.9 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 74.9 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 90.3 Td (POST /api/workspaces) Tj ET Q
+q 0.91 0.94 0.97 rg 180 74.9 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 74.9 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 90.3 Td (Create workspace, Owner membership,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 81.6 Td (starter document.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 74.9 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 74.9 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 90.3 Td (Session required; 201.) Tj ET Q
+q 0.78 0.81 0.86 RG 0.5 w 48 34 m 564 34 l S Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 48 21 Td (Collabry | Architecture and API) Tj ET Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 540 21 Td (3) Tj ET Q
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 14123 >>
+stream
+q 0.96 0.97 0.99 rg 48 718.6 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 718.6 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 734.0 Td (GET /api/workspaces/{workspaceId}/) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 725.3 Td (documents) Tj ET Q
+q 0.96 0.97 0.99 rg 180 718.6 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 718.6 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 734.0 Td (List documents and caller role.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 718.6 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 718.6 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 734.0 Td (Workspace member; nonmember 404.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 687.2 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 687.2 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 702.6 Td (POST /api/workspaces/{workspaceId}) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 693.9 Td (/documents) Tj ET Q
+q 0.91 0.94 0.97 rg 180 687.2 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 687.2 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 702.6 Td (Create document.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 687.2 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 687.2 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 702.6 Td (Owner/Editor; title optional, defaults to Untitled; 201.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 655.8000000000001 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 655.8000000000001 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 671.2 Td (GET /api/workspaces/{workspaceId}/) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 662.5 Td (members) Tj ET Q
+q 0.96 0.97 0.99 rg 180 655.8000000000001 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 655.8000000000001 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 671.2 Td (List workspace member identities and) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 662.5 Td (roles.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 655.8000000000001 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 655.8000000000001 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 671.2 Td (Any workspace member; nonmember 404.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 624.4000000000001 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 624.4000000000001 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 639.8 Td (POST /api/workspaces/{workspaceId}) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 631.1 Td (/members) Tj ET Q
+q 0.91 0.94 0.97 rg 180 624.4000000000001 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 624.4000000000001 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 639.8 Td (Add an existing account by email and) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 631.1 Td (role.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 624.4000000000001 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 624.4000000000001 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 639.8 Td (Owner-only; no email invitation flow.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 593.0000000000001 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 593.0000000000001 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 608.4 Td (PATCH /api/workspaces/{workspaceId) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 599.7 Td (}/members/{userId}) Tj ET Q
+q 0.96 0.97 0.99 rg 180 593.0000000000001 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 593.0000000000001 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 608.4 Td (Change a member role.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 593.0000000000001 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 593.0000000000001 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 608.4 Td (Owner-only; cannot grant Owner or demote last Owner.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 561.6000000000001 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 561.6000000000001 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 577.0 Td (DELETE /api/workspaces/{workspaceI) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 568.3 Td (d}/members/{userId}) Tj ET Q
+q 0.91 0.94 0.97 rg 180 561.6000000000001 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 561.6000000000001 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 577.0 Td (Remove a member.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 561.6000000000001 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 561.6000000000001 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 577.0 Td (Owner-only; cannot remove last Owner.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 530.2000000000002 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 530.2000000000002 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 545.6 Td (GET /api/documents/{documentId}) Tj ET Q
+q 0.96 0.97 0.99 rg 180 530.2000000000002 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 530.2000000000002 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 545.6 Td (Read document, content revision,) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 536.9 Td (workspace and caller context.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 530.2000000000002 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 530.2000000000002 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 545.6 Td (Workspace member; raw Yjs state is not returned.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 502.20000000000016 132 22 re f 0.64 0.69 0.76 RG 0.7 w 48 502.20000000000016 132 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 514.2 Td (PATCH /api/documents/{documentId}) Tj ET Q
+q 0.91 0.94 0.97 rg 180 502.20000000000016 148 22 re f 0.64 0.69 0.76 RG 0.7 w 180 502.20000000000016 148 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 514.2 Td (Rename document.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 502.20000000000016 236 22 re f 0.64 0.69 0.76 RG 0.7 w 328 502.20000000000016 236 22 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 514.2 Td (Owner/Editor.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 470.8000000000002 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 470.8000000000002 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 486.2 Td (PUT /api/documents/{documentId}/co) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 477.5 Td (ntent) Tj ET Q
+q 0.96 0.97 0.99 rg 180 470.8000000000002 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 470.8000000000002 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 486.2 Td (Save supported TipTap JSON with) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 477.5 Td (expectedRevision.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 470.8000000000002 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 470.8000000000002 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 486.2 Td (Owner/Editor; bounded payload; stale revision returns 409.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 439.4000000000002 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 439.4000000000002 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 454.8 Td (GET /api/documents/{documentId}/co) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 446.1 Td (mments) Tj ET Q
+q 0.91 0.94 0.97 rg 180 439.4000000000002 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 439.4000000000002 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 454.8 Td (List recent comments.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 439.4000000000002 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 439.4000000000002 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 454.8 Td (Workspace member.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 408.0000000000002 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 408.0000000000002 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 423.4 Td (POST /api/documents/{documentId}/c) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 414.7 Td (omments) Tj ET Q
+q 0.96 0.97 0.99 rg 180 408.0000000000002 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 408.0000000000002 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 423.4 Td (Add comment.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 408.0000000000002 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 408.0000000000002 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 423.4 Td (Owner/Editor/Commenter; text length 1-2000.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 376.60000000000025 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 376.60000000000025 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 392.0 Td (PATCH /api/documents/{documentId}/) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 383.3 Td (comments/{commentId}) Tj ET Q
+q 0.91 0.94 0.97 rg 180 376.60000000000025 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 376.60000000000025 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 392.0 Td (Resolve or reopen comment.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 376.60000000000025 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 376.60000000000025 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 392.0 Td (Owner/Editor/Commenter.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 345.2000000000003 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 345.2000000000003 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 360.6 Td (DELETE /api/documents/{documentId}) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 351.9 Td (/comments/{commentId}) Tj ET Q
+q 0.96 0.97 0.99 rg 180 345.2000000000003 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 345.2000000000003 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 360.6 Td (Delete comment.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 345.2000000000003 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 345.2000000000003 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 360.6 Td (Author only.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 313.8000000000003 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 313.8000000000003 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 329.2 Td (GET /api/documents/{documentId}/ve) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 320.5 Td (rsions) Tj ET Q
+q 0.91 0.94 0.97 rg 180 313.8000000000003 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 313.8000000000003 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 329.2 Td (List JSON snapshot metadata.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 313.8000000000003 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 313.8000000000003 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 329.2 Td (Workspace member; needs migrated schema.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 282.4000000000003 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 282.4000000000003 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 297.8 Td (POST /api/documents/{documentId}/v) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 289.1 Td (ersions) Tj ET Q
+q 0.96 0.97 0.99 rg 180 282.4000000000003 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 282.4000000000003 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 297.8 Td (Create labeled snapshot.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 282.4000000000003 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 282.4000000000003 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 297.8 Td (Owner/Editor; needs migrated schema; 409 during live) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 289.1 Td (collaboration or without valid JSON.) Tj ET Q
+q 0.91 0.94 0.97 rg 48 251.0000000000003 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 251.0000000000003 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 266.4 Td (POST /api/documents/{documentId}/v) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 257.7 Td (ersions/{versionId}/restore) Tj ET Q
+q 0.91 0.94 0.97 rg 180 251.0000000000003 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 251.0000000000003 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 266.4 Td (Restore snapshot and keep pre-restore) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 257.7 Td (content.) Tj ET Q
+q 0.91 0.94 0.97 rg 328 251.0000000000003 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 251.0000000000003 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 266.4 Td (Owner/Editor; needs migrated schema; 409 on concurrent change) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 257.7 Td (or live collaboration.) Tj ET Q
+q 0.96 0.97 0.99 rg 48 219.6000000000003 132 25.4 re f 0.64 0.69 0.76 RG 0.7 w 48 219.6000000000003 132 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 235.0 Td (POST /api/documents/{documentId}/c) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 53.0 226.3 Td (ollaboration-ticket) Tj ET Q
+q 0.96 0.97 0.99 rg 180 219.6000000000003 148 25.4 re f 0.64 0.69 0.76 RG 0.7 w 180 219.6000000000003 148 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 185.0 235.0 Td (Issue single-use WebSocket ticket.) Tj ET Q
+q 0.96 0.97 0.99 rg 328 219.6000000000003 236 25.4 re f 0.64 0.69 0.76 RG 0.7 w 328 219.6000000000003 236 25.4 re S Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 235.0 Td (Same-origin request, session and Owner/Editor required; returns) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 7.25 Tf 333.0 226.3 Td (503 when collaboration is disabled.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 210.6 Td (Request examples and response details are maintained in the API reference.) Tj ET Q
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 188.6 Td (Security and error handling) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 162.6 Td (Х Passwords are bcrypt-hashed; sessions and collaboration tickets are random tokens whose hashes are stored.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 149.6 Td (Х Cookies are httpOnly, SameSite=Lax, path /, and Secure in production.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 136.6 Td (Х API request bodies are validated with Zod or domain validators; document JSON has schema, size, and depth) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 123.6 Td (limits.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 110.6 Td (Х Authentication and role checks run on the server; nonmember resources are concealed as not found.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 97.6 Td (Х Unexpected API and collaboration failures suppress raw database credentials/tokens from responses and logs.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 84.6 Td (Х The integration-test URL guard allowlists one dedicated test database and strict TLS parameters; its unit) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 71.6 Td (tests are offline and do not connect.) Tj ET Q
+q 0.78 0.81 0.86 RG 0.5 w 48 34 m 564 34 l S Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 48 21 Td (Collabry | Architecture and API) Tj ET Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 540 21 Td (4) Tj ET Q
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 1280 >>
+stream
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 744.0 Td (Х DATABASE_URL is the runtime datasource; DATABASE_URL_UNPOOLED is Prisma CLI's direct URL. No secret values) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 58.0 731.0 Td (belong in source or this document.) Tj ET Q
+q 0.160 0.270 0.430 rg BT /F2 15 Tf 48.0 709.0 Td (Local verification evidence) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 683.0 Td (On 2 November 2026, the offline suite passed 125 tests after a machine-local Node 24 Windows user-info) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 670.0 Td (workaround. TypeScript, targeted ESLint, Prisma validation, production build, and git diff --check passed.) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 657.0 Td (PostgreSQL integration and migrations were not run. The earlier Redis integration used in-memory persistence. No) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 644.0 Td (performance measurement, browser end-to-end run, or production deployment has been verified; see the test) Tj ET Q
+q 0.140 0.200 0.290 rg BT /F1 9.2 Tf 48.0 631.0 Td (report.) Tj ET Q
+q 0.78 0.81 0.86 RG 0.5 w 48 34 m 564 34 l S Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 48 21 Td (Collabry | Architecture and API) Tj ET Q
+q 0.38 0.43 0.52 rg BT /F1 8 Tf 540 21 Td (5) Tj ET Q
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 14 0 R >>
+endobj
+xref
+0 16
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000148 00000 n 
+0000000245 00000 n 
+0000000347 00000 n 
+0000000452 00000 n 
+0000008235 00000 n 
+0000008381 00000 n 
+0000014919 00000 n 
+0000015065 00000 n 
+0000028351 00000 n 
+0000028499 00000 n 
+0000042675 00000 n 
+0000042823 00000 n 
+0000044155 00000 n 
+trailer
+<< /Size 16 /Root 1 0 R /Info << /Title (Collabry Architecture Data and API) /Producer (Collabry Markdown export) >> >>
+startxref
+44303
+%%EOF

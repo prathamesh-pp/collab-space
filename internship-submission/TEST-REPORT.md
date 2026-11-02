@@ -10,11 +10,14 @@
 | `npx.cmd eslint src tests` | Passed, exit code 0 | Targeted app/test lint; does not include the existing root `.node-os-userinfo.cjs` finding. |
 | Prisma schema validation | Passed | `npx.cmd prisma validate` validated the project schema with process-only local placeholder URLs; no database connection. |
 | Prisma Client generation | Passed as part of build | `npm.cmd run build` generated Prisma Client 6.12.0; no migration or database connection. |
-| `npm.cmd run build` | Passed, exit code 0 | Next.js 16.4.3 production build completed with local placeholder database URLs and collaboration disabled. |
+| `npm.cmd run build` | Passed, exit code 0 on sequential rerun | Next.js 16.4.3 production build completed with local placeholder database URLs and collaboration disabled. The first parallel gate attempt hit a transient Windows `EPERM` renaming Prisma's generated engine; a sequential rerun passed. |
 | `git diff --check` | Passed | No whitespace errors; pre-existing line-ending warnings may appear on modified tracked files. |
-| Redis two-instance integration | Not run in this handoff | A previous recorded run passed 1/1 with two Hocuspocus instances and in-memory document persistence. That historical test is not evidence of PostgreSQL persistence or a deployed service. |
+| Local production-server smoke check | Homepage `200`; anonymous `/api/auth/me` `401` | Used local dummy database URLs and collaboration disabled. The anonymous route returned before database lookup. This checks the landing page and unauthenticated guard only; authenticated workflows were not exercised. |
+| Architecture PDF | Generated, 5 pages | Generated from the Markdown source. PDF signature, page objects, and end marker were structurally checked; visual rendering was unavailable in the noninteractive environment. |
+| PowerPoint | Generated, 11 slides and 11 notes pages | PPTX ZIP integrity, XML parsing, slide count, and notes coverage passed. PowerPoint desktop could not be opened through COM in this environment, so visual slide rendering was not checked. |
+| Redis two-instance integration | Not run; loopback port 16379 had no listener | A previous recorded run passed 1/1 with two Hocuspocus instances and in-memory document persistence. That historical test is not evidence of PostgreSQL persistence or a deployed service. |
 | PostgreSQL integration tests | Not run | No integration test or migration was run. |
-| Browser, deployment, and performance checks | Not run | No deployed WebSocket service, browser automation, or performance environment was used. |
+| Browser recording, deployment, and performance checks | Not run | No browser executable/screen-capture tool, Vercel project access, or performance environment was available. No reliable latency or resource benchmark was collected. |
 
 ## Database integration boundary
 

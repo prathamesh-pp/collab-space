@@ -160,6 +160,18 @@ Use the [demo script](internship-submission/DEMO-SCRIPT.md) for a local workflow
 
 The [Vercel and PostgreSQL deployment guide](docs/DEPLOYMENT.md) is a setup checklist, not evidence of a live deployment. Production requires reviewed environment configuration and an intended PostgreSQL database. This handoff did not apply production migrations or deploy the app. The Hocuspocus process is separate from the Next.js deployment and should remain disabled in production until its database persistence, Redis coordination, and browser behavior are verified.
 
+## Internship submission
+
+- [Project report](internship-submission/PROJECT-REPORT.md)
+- [Test and verification report](internship-submission/TEST-REPORT.md)
+- [Architecture, data model, and API documentation (Markdown)](internship-submission/ARCHITECTURE-DATA-API-DOCUMENTATION.md)
+- [Architecture, data model, and API documentation (PDF)](internship-submission/ARCHITECTURE-DATA-API-DOCUMENTATION.pdf)
+- [10-minute presentation (PowerPoint)](internship-submission/PRESENTATION.pptx)
+- [Presentation speaker notes](internship-submission/PRESENTATION-SPEAKER-NOTES.md)
+- [Presentation outline](internship-submission/PRESENTATION.md)
+- [Demo walkthrough](internship-submission/DEMO-SCRIPT.md)
+- [Individual reflection](internship-submission/INDIVIDUAL-REFLECTION.md)
+
 ## Known limitations and future work
 
 - PostgreSQL-backed persistence and the version-history migration have not been integration-tested; the version migration remains unapplied.

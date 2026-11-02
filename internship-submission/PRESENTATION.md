@@ -2,6 +2,8 @@
 
 This talk track distinguishes repository implementation from verification. A prior real Redis integration passed locally using in-memory persistence, but it was not rerun for this handoff. No PostgreSQL integration, migration, browser end-to-end test, or deployment verification was performed. Do not present database-backed persistence or deployed collaboration as verified.
 
+The 11-slide deck is [PRESENTATION.pptx](PRESENTATION.pptx); slide-by-slide timing and narration are in [PRESENTATION-SPEAKER-NOTES.md](PRESENTATION-SPEAKER-NOTES.md).
+
 ## 0:00–0:45 — Problem
 
 Collabry organizes team workspaces, rich-text documents, discussion, and access roles. The project adds a path toward safe simultaneous editing while retaining a straightforward document workflow.

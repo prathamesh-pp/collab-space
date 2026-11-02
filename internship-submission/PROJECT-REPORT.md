@@ -24,8 +24,8 @@ This report describes repository implementation and local test evidence. A previ
 | Deployed real-time demo | Not delivered/verified | No WebSocket deployment or real-browser session was run |
 | Performance measurements | Not collected | No meaningful latency/load result is available |
 | Release delivery | Reported separately | This report records implementation and verification evidence; commit, push, and deployment outcomes are reported separately |
-| Architecture/API docs | Prepared | `docs/API.md`, `docs/COLLABORATION-REDIS.md`, and this report |
-| Presentation and reflection | Prepared as drafts | Presentation outline and reflection prompts; reflection needs the intern's personal experience |
+| Architecture/API docs | Prepared | [`ARCHITECTURE-DATA-API-DOCUMENTATION.md`](ARCHITECTURE-DATA-API-DOCUMENTATION.md), its PDF export, `docs/API.md`, and `docs/COLLABORATION-REDIS.md` |
+| Presentation and reflection | Prepared with one personal prompt | 11-slide PowerPoint with speaker notes and a matching outline; reflection is grounded in repository history but leaves one personal example for the intern to complete |
 
 ## Architecture
 
@@ -74,4 +74,5 @@ On 2 November 2026, `npm.cmd test` passed 125 tests after applying the repositor
 - PostgreSQL-backed persistence and version-history integration have not been verified; the version-history migration is unapplied.
 - The prior Redis test used in-memory persistence and is not evidence of PostgreSQL durability or deployment readiness.
 - The separate WebSocket service, browser-based two-user editing, production deployment, performance, and screen recording have not been verified or delivered.
-- The personal reflection remains a draft prompt and requires the intern's own experience if a completed reflection is required.
+- The home page and anonymous session guard returned the expected local HTTP responses; authenticated workflows were not exercised because no database was configured.
+- The personal reflection is a first-person draft with one prompt for an example that repository evidence cannot establish.
