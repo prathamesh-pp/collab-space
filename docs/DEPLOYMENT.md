@@ -1,6 +1,6 @@
 # Collabry: first production deployment on Vercel + Neon
 
-This project is a Next.js App Router application that uses Prisma ORM 6.12.0 and PostgreSQL. Deploy the Next.js app on Vercel's Node.js runtime. Do not use a static export or deploy `src/collaboration/server.ts`: that is a separate, long-running Hocuspocus WebSocket process, and real-time collaboration is fail-closed and must remain disabled.
+This project is a Next.js App Router application that uses Prisma ORM 6.12.0 and PostgreSQL. Deploy the Next.js app on a supported Node.js runtime. Do not use a static export. `src/collaboration/server.ts` is a separate, long-running Hocuspocus WebSocket process and needs its own secure deployment. Keep the collaboration feature flag off until the WebSocket deployment, database persistence, and Redis multi-instance integration have been verified; this document is a checklist, not evidence that a deployment exists.
 
 ## 1. Create the Neon database
 
@@ -50,9 +50,14 @@ After Vercel deploys:
 2. Register a dedicated test account, sign out, then sign in again. Confirm the session survives a refresh and that the production session cookie is marked `Secure` and `HttpOnly`.
 3. Create a workspace and document. Edit the title and body, wait for the title save and **All changes saved** status, refresh, and verify both remain.
 4. Add and resolve a comment. Confirm workspace members can access only their documents; an unauthenticated request to `/api/auth/me` should return `401`.
-5. Check Vercel Function logs for unexpected errors. Do not log database URLs, passwords, session tokens, or collaboration tickets.
+5. After the reviewed version-history migration is applied to the intended database, verify snapshot creation and restore, including stale revision behavior.
+6. Check application logs for unexpected errors. Do not log database URLs, passwords, session tokens, or collaboration tickets.
 
-The project does not include version history, invitations, email verification, password reset, rate limiting, or automated database integration tests. Recents are stored in browser `localStorage`. Do not present those missing capabilities as available. The successful local database check is not a substitute for this production smoke test.
+Version history is implemented in source but its migration must be applied to the intended database before the endpoints can work there. Invitations, email verification, password reset, rate limiting, and automated live-database tests are not implemented. Recents are stored in browser `localStorage`. Do not present these absent capabilities or unrun production checks as available.
+
+## Optional collaboration service
+
+The Hocuspocus process is not included in a normal Next.js deployment. Before turning on the client flag, deploy the WebSocket process separately, configure exact allowed HTTPS origins, short-lived ticket authentication, PostgreSQL persistence, and a private TLS Redis service shared by all instances. Set `COLLABORATION_REDIS_REQUIRED=true` for multi-instance service startup. The real two-instance integration has passed locally against dedicated Memurai with in-memory persistence. Verify PostgreSQL persistence and two independent browser clients, along with presence cleanup, revocation, Redis outage/recovery, and monitoring before enabling the feature flag. See [Redis integration instructions](COLLABORATION-REDIS.md).
 
 ## Environment variable names
 

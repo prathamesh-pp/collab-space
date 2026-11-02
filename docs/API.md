@@ -2,7 +2,7 @@
 
 Base URL for local development: `http://localhost:3000`. JSON request and response bodies are used. Authentication is a browser cookie named `collab_session`; it is `httpOnly`, `SameSite=Lax`, path `/`, and `Secure` in production. Do not send a session token in JSON or logs.
 
-The currently implemented endpoints are listed below. Version history is not exposed as an API route. Delete operations are limited to a user's own comment, except owner-authorized workspace membership removal.
+The currently implemented endpoints are listed below. Delete operations are limited to a user's own comment, except owner-authorized workspace membership removal.
 
 ## Authentication
 
@@ -90,19 +90,17 @@ Deletes the caller's own comment only. All comment endpoints require an authenti
 
 ### `POST /api/documents/{documentId}/collaboration-ticket`
 
-Currently returns `503`: the fail-closed operational gate keeps collaboration disabled in every environment. If re-enabled after the persistence lifecycle and migration prerequisites are resolved, ticket issuance requires exact `NODE_ENV=development`, explicit opt-in, a valid session, and owner/editor membership. Tickets are random, single-use, document-scoped, session-bound, and expire after one minute; only their hashes are stored. Database durability is not implied by provider sync.
+The endpoint returns `503` while `NEXT_PUBLIC_COLLABORATION_ENABLED` is not explicitly `true` for development or production. When enabled, ticket issuance requires a valid session and owner/editor membership. Tickets are random, single-use, document-scoped, session-bound, and expire after one minute; only their hashes are stored. Database durability is not implied by provider sync. Keep the production flag off until a separately deployed WebSocket service and persistence have been verified.
 
-## Proposed Document Version History Contract (Not Implemented)
+For deployments that run multiple Hocuspocus instances, configure the official `@hocuspocus/extension-redis` 3.4.4 with the same private `COLLABORATION_REDIS_URL` on each instance and set `COLLABORATION_REDIS_REQUIRED=true`. Redis carries Hocuspocus document-update and awareness messages; it does not persist documents. PostgreSQL Yjs state remains authoritative for persistence. Redis channels use the `collabry` prefix and the globally unique document ID; every connection is still authenticated and checked against current session, document, workspace membership, and editor role. On Redis disconnection, active sockets are closed and incoming messages fail closed; after reconnection, clients reconnect and request fresh single-use tickets. Local same-server presence tests and the real two-instance integration against dedicated loopback Memurai have passed; that Redis run used in-memory document persistence. PostgreSQL persistence and a deployed WebSocket service remain unverified.
 
-The current editor stores TipTap JSON in `Document.content`, but `DocumentVersion` currently requires a binary `yState` and has no JSON snapshot field. The document editor's History panel therefore reports that history is unavailable; no version endpoints, snapshots, previews, or restores are implemented. Do not place JSON in `DocumentVersion.yState`.
+## Document Version History
 
-The smallest schema prerequisite for legacy-editor history is a nullable `DocumentVersion.content Json?` field and making `DocumentVersion.yState` nullable. Existing binary Yjs snapshots must remain unchanged. A migration should preserve all existing rows and keep JSON and binary snapshots distinct (preferably with a constraint requiring exactly one snapshot representation).
-
-After that migration is reviewed and applied, the proposed API is:
+JSON snapshots use a separate nullable `DocumentVersion.content` column. Existing binary Yjs snapshots remain in `yState`; the additive migration makes that legacy column nullable without rewriting existing rows. Apply the migration before using these endpoints. Snapshots are explicit restore points, not created on every autosave.
 
 ### `GET /api/documents/{documentId}/versions`
 
-Requires a valid session and workspace membership; nonmembers receive `404`. Returns metadata only, newest first:
+Requires a valid session and workspace membership; nonmembers receive `404`. Returns JSON snapshot metadata newest first (maximum 100):
 
 ```json
 {
@@ -111,22 +109,24 @@ Requires a valid session and workspace membership; nonmembers receive `404`. Ret
       "id": "version-id",
       "label": "Before major edits",
       "createdAt": "2026-10-24T10:00:00.000Z",
-      "author": { "id": "user-id", "name": "Ada Lovelace" }
+      "user": { "name": "Ada Lovelace" }
     }
   ]
 }
 ```
 
-### `GET /api/documents/{documentId}/versions/{versionId}`
+### `POST /api/documents/{documentId}/versions`
 
-Requires workspace membership and verifies that the version belongs to the URL document. Returns the JSON snapshot for a read-only preview; never returns Yjs binary state through this legacy JSON contract.
+Body: `{ "label": "Before major edits" }`. Owner/editor only. Saves current valid TipTap JSON as a labeled snapshot and returns `201`; when persisted Yjs state exists, it is the snapshot source rather than the legacy JSON column. Empty or malformed content receives `409`. Snapshot creation returns `409` while live collaborative editing is configured because an in-flight document state cannot yet be snapshotted consistently.
 
 ### `POST /api/documents/{documentId}/versions/{versionId}/restore`
 
-Requires OWNER or EDITOR membership. Body: `{ "expectedRevision": 12 }`. In a single database transaction, compare-and-set the document's current `contentRevision`, preserve the pre-restore current JSON as a version when it differs from the selected snapshot, apply the selected JSON, and increment the revision. A stale revision returns `409` with the current revision; it must not overwrite content. VIEWER and COMMENTER roles receive `403`.
+Requires OWNER or EDITOR membership. Verifies the version belongs to the URL document, preserves current valid JSON as a `Before restore` version in the same transaction, restores the selected snapshot, and increments `contentRevision` with compare-and-set protection against both JSON revision and persisted Yjs state. A concurrent edit returns `409`; VIEWER and COMMENTER roles receive `403`. Restore returns `409` while live collaborative editing is configured, because active Hocuspocus documents cannot yet be replaced safely. The UI reloads after a successful legacy-mode restore.
 
-Snapshots should be created server-side only after a successful content write, at meaningful save boundaries rather than for each debounced keystroke. The snapshot operation and revision update must be atomic so an unsuccessful or stale write cannot create a misleading history entry. A retention policy should be selected before enabling automatic snapshots.
+## PostgreSQL-backed version-history test
+
+The PostgreSQL integration tests accept only the dedicated Neon project `collabry-production`, branch `collabry-test` (`br-steep-leaf-b4p3hqt3`), database `collabry_test`, using direct hostname `ep-muddy-thunder-b4hdbzfm.c-6.us-east-2.aws.neon.tech` and exactly `sslmode=require`, `sslaccept=strict`, and `channel_binding=require`. The shared guard rejects production and unknown hosts, localhost, pooled endpoints, and every database name except `collabry_test`; it never includes the supplied URL or credentials in validation errors. Set `COLLABORATION_TEST_DATABASE_URL` only for the test process, then run `npm run test:database:versions`. It creates uniquely identified fixture rows and removes only its own workspace and user fixtures; it does not migrate or reset the database. The dedicated branch/database identity and empty public schema were verified read-only; its migrations remain unapplied. If the test schema is not provisioned, run checked-in migrations against this dedicated test database only after a separate review and explicit approval. Never point migration commands at `neondb` or the production branch. The regular `npm test` suite runs only the offline URL-validator unit tests, not this integration test.
 
 ## Error Shape
 
-Validation and authorization errors use `{ "error": "..." }` with a 4xx status. Unexpected failures handled by the shared wrapper use a generic `500` response. Registration has its own generic failure handler. Automated database integration tests are not included; the isolated unit tests use in-memory repositories and do not verify live PostgreSQL behavior.
+Validation and authorization errors use `{ "error": "..." }` with a 4xx status. Unexpected failures handled by the shared wrapper use a generic `500` response. Registration has its own generic failure handler. An opt-in PostgreSQL version-history integration test is available but has not been run. The default unit suite uses in-memory repositories and does not verify live PostgreSQL behavior.

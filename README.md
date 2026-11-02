@@ -1,49 +1,111 @@
 # Collabry
-Collabry is an early-stage Next.js App Router project with account registration and login, opaque database-backed sessions, workspace management, and a persistent TipTap document editor. Rich-text content is saved as validated JSON with revision checks. TipTap/Yjs/Hocuspocus integration code is present, but collaboration is currently disabled in every environment pending safe persistence-failure reporting and integration tests.
 
-## Status
+Collabry is a collaborative workspace and document editing application. Teams can organize workspaces, manage member roles, and create rich-text documents with comments and version history. The repository also includes an optional Yjs and Hocuspocus collaboration service for live editing and presence, coordinated across instances by Redis.
 
-Implemented in source:
+> **Verification status:** Core application logic, UI, and collaboration behavior have local test coverage. PostgreSQL-backed integration, live multi-browser collaboration, and production deployment have not been verified. Keep the collaboration flag disabled in production until those checks are complete.
 
-- Registration creates a user, owner membership, starter workspace, and starter document in a database transaction.
-- Login/logout use a 30-day `httpOnly`, `SameSite=Lax` cookie. Session tokens are random 256-bit values; only SHA-256 hashes are stored. Passwords are bcrypt-hashed, and both registration and login reject values longer than bcrypt's 72-byte UTF-8 input limit.
-- Workspace listing/creation and document list/create/read/rename APIs require an authenticated user. Membership is checked for workspace/document reads and writes; nonmembers receive not-found responses.
-- The dashboard restores sessions, lists workspaces, and links to individual document pages.
-- The TipTap editor supports basic formatting and persists rich-text JSON through a bounded, validated endpoint. Content revisions reject stale writes; owner/editor roles can edit, commenter roles can comment, and viewer roles are read-only.
-- Comments are implemented: workspace members can read them, owner/editor/commenter roles can create and resolve them, and authors can delete their own comments.
-- Workspace member lists are visible to members. Owners can change non-owner roles or remove members; the last owner cannot be demoted or removed.
-- API JSON is validated with Zod. Unexpected errors handled by the shared wrapper return generic JSON responses.
-- A PostgreSQL Prisma schema and additive migrations are included. `Document.yState` remains reserved for Yjs updates.
-- Collaboration ticket issuance and Hocuspocus authentication logic are implemented, but the endpoint and server hooks are currently disabled by the fail-closed operational readiness gate.
+## The problem and approach
 
-Not implemented (do not treat as available):
+Teams need a shared place to draft documents and discuss changes without losing track of access or edits. Collabry combines authenticated workspaces, role-aware document access, a TipTap editor, comments, and revision-checked saves. Its optional collaboration path uses Yjs to merge concurrent document edits and Hocuspocus to communicate updates over WebSockets.
 
-- The TipTap editor/provider client and Hocuspocus Yjs persistence hooks are present, but the operational gate currently keeps collaboration disabled in every environment. Hocuspocus v3.1.1 detaches debounced store failures from the document-update callback, so a failed write cannot be reliably surfaced to the editor without a safe lifecycle integration. Provider synchronization is not a durability acknowledgement; database persistence and two-browser synchronization have not been integration-tested.
-- Version snapshots/history are not implemented; the history dialog reports that it is unavailable, and no version endpoints or restore UI are available.
-- There are no workspace/document delete endpoints, email invitation flow, rate limiting, or automated database integration tests.
+## Features
+
+- Registration and login with bcrypt-hashed passwords and opaque database-backed sessions.
+- Personal and shared workspaces, documents, dashboard search, and recently opened documents.
+- Server-enforced `OWNER`, `EDITOR`, `COMMENTER`, and `VIEWER` access policies.
+- TipTap rich-text editing with bounded JSON validation and revision checks to reject stale saves.
+- Comments with role checks, resolve/reopen behavior, and author-only deletion.
+- Labeled JSON document snapshots and restore logic, covered by unit tests. The version-history migration must be applied to a database before those routes can be used there.
+- Optional Yjs/Hocuspocus editing, authenticated presence, single-use collaboration tickets, and Redis coordination code.
+
+The Yjs/Hocuspocus path is opt-in and is not production-ready: PostgreSQL persistence and two-browser editing have not been integration-tested, and the WebSocket service has not been deployed. A previous two-instance Redis test passed locally with in-memory persistence; it did not verify PostgreSQL durability or production behavior.
+
+## Technology
+
+- Next.js App Router and React
+- TypeScript
+- Prisma ORM and PostgreSQL
+- TipTap / ProseMirror
+- Yjs CRDT documents and Hocuspocus WebSockets (optional collaboration path)
+- Redis Pub/Sub and coordination (multi-instance collaboration only)
+- Zod validation and Node.js test runner
+
+## Architecture
+
+```mermaid
+flowchart LR
+  Browser[Browser]
+  App[Next.js App Router]
+  Auth[Opaque session and membership checks]
+  Editor[TipTap editor]
+  WS[Optional Hocuspocus WebSocket service]
+  Yjs[Yjs document and Awareness]
+  Redis[(Redis coordination)]
+  Prisma[Prisma]
+  DB[(PostgreSQL)]
+
+  Browser --> App
+  App --> Auth
+  Auth --> Prisma
+  Prisma --> DB
+  Editor -->|opt-in live edits| WS
+  WS --> Yjs
+  WS -->|optional multi-instance sync| Redis
+  WS -->|Yjs state persistence| Prisma
+```
+
+### Yjs and conflict resolution
+
+Yjs represents shared document edits as CRDT updates. Concurrent edits can be merged without choosing one user's entire document as the winner. In Collabry's optional path, TipTap binds to a Yjs document, the Hocuspocus provider sends updates over WebSockets, and server-side authorization checks access before collaboration tickets and connections are accepted. Awareness carries ephemeral presence data such as user identity and cursor position; it is separate from saved document state.
+
+The current conventional editor path saves validated TipTap JSON through HTTP with a document revision. The Yjs and WebSocket path is implemented but its database durability and browser-to-browser behavior remain unverified. A provider synchronization event is not treated as a PostgreSQL durability acknowledgement.
+
+### Redis and multiple collaboration instances
+
+The official Hocuspocus Redis extension is used to propagate Yjs document updates and awareness between service instances and coordinate its store hook. Redis is not the document database; PostgreSQL is intended to persist Yjs state. Redis Pub/Sub is not durable, so a successful Redis test with in-memory persistence does not prove database durability. Use a private TLS Redis endpoint for remote services. Keep collaboration disabled in production until the separate WebSocket service, PostgreSQL persistence, Redis behavior, and browser clients are verified.
+
+### Authentication and authorization
+
+Passwords are bcrypt-hashed. Session tokens are random opaque values stored as SHA-256 hashes and delivered in an `httpOnly`, `SameSite=Lax` cookie (`Secure` in production). API handlers validate input and enforce workspace membership and role permissions on the server. Nonmembers do not receive protected workspace or document data. The final workspace owner cannot be demoted or removed.
+
+## Project layout
+
+```text
+src/app/                 Next.js pages and API routes
+src/collaboration/       Hocuspocus, Yjs, presence, and Redis integration
+src/lib/                 Authentication, persistence, validation, and domain logic
+prisma/                  Prisma schema and checked-in migrations
+tests/                   Offline unit tests and opt-in integration tests
+docs/                    API, deployment, and collaboration guides
+internship-submission/   Project, test, presentation, and demo handoff documents
+public/                  Static assets and local font files
+```
 
 ## Requirements
 
-- Node.js 20.19+ recommended (use an active supported Node.js LTS).
-- npm 10+.
-- PostgreSQL 15+ for a live local demonstration.
-- Git and a terminal; on Windows, the commands below work in PowerShell.
+- Node.js 20.19 or newer (an active supported LTS release is recommended)
+- npm 10 or newer
+- PostgreSQL 15 or newer for running the application
+- Redis only for multi-instance collaboration
 
-## Local Setup
+## Run locally
 
-The app requires PostgreSQL at runtime. These steps are for an isolated, local, test-only database; do not point the app at production or any database you are not authorized to use.
-
-1. Install Node.js and npm, then install PostgreSQL 15 or newer. Start the local PostgreSQL service.
-2. Create a **new empty** database named `collab_space` using pgAdmin or your local PostgreSQL administrator. Use a local least-privilege account where practical.
-3. From the repository root, copy the committed environment template and edit the local copy:
+1. Install PostgreSQL and create a new, empty local development database. Use a disposable local database, not production data.
+2. From the repository root, create a local environment file from the template:
 
    ```powershell
    Copy-Item .env.example .env
    ```
 
-   Update only your local `.env` so `DATABASE_URL` and `DATABASE_URL_UNPOOLED` match your local PostgreSQL connection. They may use the same direct URL locally. For Neon, use the pooled URL for `DATABASE_URL` and the direct URL for `DATABASE_URL_UNPOOLED`. The template is an example, not a guaranteed match for your installation. Keep credentials out of source control and logs; `.env` is ignored by Git.
+3. Configure the required variable names in `.env`:
 
-4. Install locked dependencies, generate Prisma Client, and then apply the checked-in migration history:
+   - `DATABASE_URL`: PostgreSQL URL used by the application.
+   - `DATABASE_URL_UNPOOLED`: direct PostgreSQL URL used by Prisma CLI migrations. It may match `DATABASE_URL` for a local database.
+   - `NEXT_PUBLIC_COLLABORATION_ENABLED`: set to `false` for the standard application setup.
+
+   Do not commit `.env` or share connection strings. `.env.example` contains placeholders only.
+
+4. Install dependencies, generate Prisma Client, and apply checked-in migrations to the confirmed local database:
 
    ```powershell
    npm ci
@@ -51,103 +113,63 @@ The app requires PostgreSQL at runtime. These steps are for an isolated, local, 
    npm run db:migrate:deploy
    ```
 
-   Only run the migration step after database use is approved and you have confirmed `DATABASE_URL` points to the intended local test database. Prisma applies the checked-in migrations in order; do not execute SQL files manually. `npm run db:migrate` is a development-only `prisma migrate dev --name init` command that can create a new migration; it is not the setup/deploy command for this repository.
+   Confirm the target is the intended local development database before applying migrations. `npm run db:migrate` is a development-only Prisma command that may create a migration; it is not the normal setup command.
 
-5. Start the Next.js app:
+5. Start the application:
 
    ```powershell
    npm run dev
    ```
 
-6. Open `http://localhost:3000` and register a test account. Registration creates a personal workspace, owner membership, and starter document.
+6. Visit `http://localhost:3000`, register a disposable test account, and create a workspace and document.
 
-### Demonstration flow
+### Optional collaboration service
 
-1. Sign up, then refresh the dashboard to demonstrate session restoration.
-2. Create a workspace and a titled document; open it and edit the title and formatted content.
-3. Wait for **All changes saved**, refresh the document, and confirm the title/content remain. This demonstrates the HTTP JSON autosave path against the configured database.
-4. Add, resolve, and delete a comment. Use dashboard search, open the document from Recent documents, and inspect workspace Access.
-5. Open History to see the explicit unavailable state; version history is not implemented.
-6. A new account initially has only its own workspace. Invitations are not implemented, so demonstrating multiple roles/member changes requires a second test user and membership provisioned through a separately approved method; no provisioning flow is included here.
+The normal application runs with collaboration disabled. To experiment with the separate Hocuspocus process, configure the local app and server with the appropriate environment variable names: `NEXT_PUBLIC_COLLABORATION_ENABLED`, `NEXT_PUBLIC_COLLABORATION_URL`, `COLLABORATION_PORT`, `COLLABORATION_HOST`, `COLLABORATION_ALLOWED_ORIGINS`, and the database variables above. Start the Next.js app and the WebSocket service in separate terminals (`npm run dev` and `npm run dev:collab`).
 
-Database setup, migrations, and live save/reload are not covered by automated unit tests. Without an approved local database, demonstrate only the build and isolated tests; do not claim persistence was verified.
+`COLLABORATION_REDIS_URL` and `COLLABORATION_REDIS_REQUIRED` are for multi-instance service coordination; a single local instance does not need Redis. Follow [the Redis service guide](docs/COLLABORATION-REDIS.md) for its test setup. This optional service is experimental: do not enable it in production based on local unit or in-memory Redis results alone.
 
-## Environment Variables
+`COLLABORATION_TEST_DATABASE_URL` and `COLLABORATION_TEST_REDIS_URL` are for their respective opt-in integration tests only. They are not needed to run the app or the default offline suite. The PostgreSQL integration URL is restricted by the repository's validator to its dedicated test target.
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `DATABASE_URL` | Yes | PostgreSQL runtime connection. For Neon/Vercel use Neon's pooled connection string; locally use your PostgreSQL connection. |
-| `DATABASE_URL_UNPOOLED` | For Prisma CLI | Direct PostgreSQL connection used by Prisma CLI operations such as migrations. For Neon, use the unpooled connection string. It may match `DATABASE_URL` for a local database without a pooler. |
-| `COLLABORATION_PORT` | For `dev:collab` | WebSocket server port (1-65535). |
-| `COLLABORATION_ALLOWED_ORIGINS` | For `dev:collab` | Comma-separated exact browser origins; HTTPS in production, loopback HTTP for local development. Wildcards and paths are rejected. |
-| `COLLABORATION_HOST` | No | Bind address for the separate WebSocket process; defaults to `127.0.0.1`. |
-| `NEXT_PUBLIC_COLLABORATION_ENABLED` | No | Defaults to `false`. The editor, ticket API, JSON-write guard, and Hocuspocus server require exact `NODE_ENV=development` and this explicit flag, but an additional fail-closed readiness gate currently keeps collaboration disabled in every environment. |
-| `NEXT_PUBLIC_COLLABORATION_URL` | When collaboration is enabled | Hocuspocus WebSocket URL. Use a local `ws://` address only for local development; the value is not a credential. |
+## Checks and test evidence
 
-`.env*` files are ignored by Git; `.env.example` is the only committed environment template. Use a secret manager in production. Require TLS for remote PostgreSQL and restrict network access to the application. Collaboration variables are optional for the current app because real-time collaboration is disabled.
+Run the local checks from PowerShell:
 
-## Architecture
-
-```mermaid
-flowchart LR
-  Browser[Browser or API client]
-  Next[Next.js App Router\nAuth and JSON route handlers]
-  Hocuspocus[Optional Hocuspocus WebSocket process\nCurrently disabled]
-  Auth[Opaque session cookie\nSHA-256 token lookup]
-  Policy[Session and membership checks]
-  Prisma[Prisma Client]
-  DB[(PostgreSQL)]
-  Browser --> Next
-  Browser -. "not enabled" .-> Hocuspocus
-  Hocuspocus -->|one-use ticket| Policy
-  Next --> Auth
-  Auth --> Policy
-  Policy --> Prisma
-  Prisma --> DB
+```powershell
+npm.cmd test
+npx.cmd tsc --noEmit
+npx.cmd eslint src tests
+npx.cmd prisma validate
+npm.cmd run build
+git diff --check
 ```
 
-The existing TipTap JSON autosave remains the active content path. Collaboration configuration accepts only exact `NODE_ENV=development` plus an explicit `"true"` opt-in, but the operational readiness gate currently disables the editor, ticket endpoint, JSON-write guard, and server hooks in all environments. This fail-closed state is required because Hocuspocus v3.1.1 does not await debounced persistence failures from its document-update callback; those failures cannot currently be presented as durable-save status. The local development database migration was applied and verified; any production database still needs its own reviewed `migrate deploy` step. Two-browser and database integration tests are still required. The persistence design assumes one collaboration-server process per document; no Redis/shared-document coordination or active-socket revocation mechanism is configured.
+On 2 November 2026, the offline suite passed **125 tests** (including nine URL-validator tests), and TypeScript, targeted ESLint, Prisma schema validation, production build, and `git diff --check` passed. The local Node 24 host required a process-only user-info workaround for the test runner; that machine-specific helper is not part of the project release. The checks did not connect to a database.
 
-Do not enable collaboration or remove the operational readiness gate until Hocuspocus persistence failures can be reliably observed without detached rejections, the required migration has been explicitly approved and confirmed applied, and database and two-client integration tests have passed. The configured flag alone does not activate collaboration. Do not expose tickets in URLs or logs.
+PostgreSQL integration tests are opt-in and were not run. The Redis two-instance integration passed in an earlier local run using in-memory document persistence; it was not rerun for this handoff. Neither result verifies PostgreSQL durability, real-browser end-to-end behavior, or a deployed service. See the [test report](internship-submission/TEST-REPORT.md) for exact scope and limitations.
 
-## Authorization
+## Demo and assets
 
-Each protected route resolves the opaque cookie to a non-expired session, then verifies workspace membership. Workspace creation atomically inserts the owner membership and a starter document. Current write policy:
+A logo asset is included; no verified product screenshots or production demo URL are included in this handoff.
 
-| Role | Read workspace documents | Create/rename/edit documents | Comment and resolve | Manage members |
-| --- | --- | --- | --- | --- |
-| Owner | Yes | Yes | Yes | Yes |
-| Editor | Yes | Yes | Yes | No |
-| Commenter | Yes | No | Yes | No |
-| Viewer | Yes | No | No | No |
+![Collabry logo](<Collabry Collaboration Logo.png>)
 
-All permissions are enforced server-side. Members can read workspace members and document comments; only the comment author can delete their comment. Owners may manage roles/removals, subject to the last-owner protection.
-
-## API
-
-See [API documentation](docs/API.md) for endpoint payloads, responses, and limitations.
-
-## Checks
-
-Run the local gates:
-
-```bash
-npm run lint
-npx tsc --noEmit
-npm test
-npm run build
-```
-
-The automated tests use isolated core logic, in-memory repositories, and local fixtures; they do not connect to PostgreSQL and do not establish real database behavior. TypeScript, lint, and build checks likewise do not run migrations or database-backed tests. Database integration and authenticated save/reload behavior must be demonstrated separately against an explicitly configured database.
+Use the [demo script](internship-submission/DEMO-SCRIPT.md) for a local workflow. Demonstrating persistence requires a configured local database. Do not describe database-backed collaboration as verified based only on unit tests.
 
 ## Deployment
 
-See [Vercel + Neon deployment checklist](docs/DEPLOYMENT.md) for project setup, connection strings, controlled migration deployment, and production smoke tests. The app uses Next.js server features and must run on Vercel's Node.js runtime; it is not a static export. Real-time collaboration remains disabled and the separate Hocuspocus server must not be deployed as part of this setup.
+The [Vercel and PostgreSQL deployment guide](docs/DEPLOYMENT.md) is a setup checklist, not evidence of a live deployment. Production requires reviewed environment configuration and an intended PostgreSQL database. This handoff did not apply production migrations or deploy the app. The Hocuspocus process is separate from the Next.js deployment and should remain disabled in production until its database persistence, Redis coordination, and browser behavior are verified.
 
-## Presentation
+## Known limitations and future work
 
-See the [10-minute presentation outline](docs/PRESENTATION.md).
+- PostgreSQL-backed persistence and the version-history migration have not been integration-tested; the version migration remains unapplied.
+- The optional WebSocket service is not deployed, and two-browser editing is unverified.
+- Redis coordination has historical local test evidence with in-memory persistence only.
+- Workspace/document deletion, invitations, email verification, password reset, and rate limiting are not implemented.
+- No performance results or production smoke-test results are available.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Potential next work includes database-backed integration coverage, browser-based collaboration verification, a separate secure WebSocket deployment, performance testing, and the missing account/workspace workflows.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contribution and license
+
+No contribution process or license file is currently included. Confirm project ownership and add an appropriate license before redistributing the code.

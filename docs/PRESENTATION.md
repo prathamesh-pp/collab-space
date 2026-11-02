@@ -1,39 +1,43 @@
-# Collabry: 10-Minute Presentation Outline
+# Collabry: 10-Minute Presentation
 
-## 0:00-0:45 | Problem and scope
+Use the accompanying submission notes as a factual guide. The real Redis integration passed locally against dedicated Memurai using in-memory persistence. Database, browser, and deployment gaps below should be stated plainly.
 
-Introduce the goal: a shared workspace with documents and role-aware access. Set expectations clearly: the persistent single-user TipTap JSON editor remains the active path. TipTap/Yjs/Hocuspocus client, ticket authentication, and persistence hooks are implemented, but a fail-closed readiness gate keeps collaboration disabled because Hocuspocus v3.1.1 detaches debounced store failures from its update callback. Database persistence and two-client behavior are unverified.
+## 0:00–0:45 | Problem
 
-## 0:45-1:45 | Current project and stack
+Collabry gives teams a workspace for organizing rich-text documents, discussing changes, and controlling who can read, comment, or edit. The project goal is to make that document workflow safe and extensible toward real-time collaboration.
 
-Show Next.js App Router, TypeScript, Tailwind, Prisma, PostgreSQL, Zod, bcrypt, and database-backed opaque sessions. TipTap is wired for persistent JSON document editing; the separate collaboration client/provider path is experimental, disabled by default, and its persistence behavior remains unverified.
+## 0:45–1:45 | Product walk-through
 
-## 1:45-3:00 | Data model
+Show registration/login, the workspace dashboard, a document page, formatted editing, comments, access roles, and version history. The ordinary document page saves validated TipTap JSON through the Next.js API with revision checks. Version history is implemented but requires the checked-in migration on the demonstration database.
 
-Walk through User, Session, Workspace, WorkspaceMember, Document, Comment, and CollaborationTicket. Point out the role enum and cascade relations. `DocumentVersion` and `Document.yState` are schema groundwork only; no version snapshots are available, and Yjs data is not active in the editor.
+## 1:45–2:45 | Architecture
 
-## 3:00-4:30 | Authentication and security
+Walk through Next.js route handlers, Prisma, PostgreSQL, the separate Hocuspocus WebSocket process, Yjs, and the optional Redis coordination extension. Explain the two document paths: JSON autosave for normal editing and Yjs updates for the separately enabled collaborative path. Redis coordinates instances; PostgreSQL remains the persistence store.
 
-Show registration transaction: create user, workspace, owner membership, and starter document. Explain bcrypt password hashes with a 72-byte UTF-8 limit enforced at registration and login, random session tokens, SHA-256-only token storage, expiry, HttpOnly/SameSite cookie flags, generic login error, Zod input validation, and sanitized API failures.
+## 2:45–4:00 | Authentication and authorization
 
-## 4:30-6:00 | Authorization and API demo
+Explain hashed opaque session tokens, bcrypt password hashes, one-time document-scoped collaboration tickets, server-side workspace membership checks, and the Owner/Editor/Commenter/Viewer policy. Active collaboration connections periodically revalidate authorization and close after revocation or role demotion.
 
-Demonstrate workspace list/create and document list/create/read/rename/content-save endpoints. Explain membership checks, owner/editor-only document writes, revision conflicts, and `404` for nonmember document access. Show comments and the owner-only member role/removal controls, including last-owner protection.
+## 4:00–5:15 | Presence and collaboration behavior
 
-## 6:00-7:00 | Tests and evidence
+Describe authenticated Yjs awareness, deterministic collaborator colors and initials, cursor decorations, online collaborator indicators, document scoping, and disconnect cleanup. Local tests use real Hocuspocus WebSocket clients for same-server synchronization and presence. The two-instance Redis integration passed against isolated local Memurai; that run used in-memory persistence, and no WebSocket service is deployed.
 
-Show the isolated unit tests, typecheck, lint, and production build. These checks do not connect to PostgreSQL and do not prove database-backed behavior. Authenticated live save/reload and stale-write demonstrations require an explicitly configured database and must be run separately; no database integration suite is included.
+## 5:15–6:15 | Version history and conflict handling
 
-## 7:00-8:15 | Gaps and risks
+Show explicit labeled JSON snapshots and restore. Restoring checks document ownership, preserves current valid content as a `Before restore` snapshot, increments the content revision, and clears persisted Yjs state. Version creation and restore are paused while live collaboration is configured, preventing stale snapshots and active-document replacement until coordinated Yjs history is implemented.
 
-List the missing version snapshot/restore API, cursor presence, real two-browser/reconnect tests, rate limiting, and DB-backed automated tests. The access/history dialogs are implemented, but history is an explicit unavailable-state panel because version snapshots are not implemented. Do not claim tested realtime collaboration or durable Yjs saves.
+## 6:15–7:15 | Evidence
 
-## 8:15-9:15 | Next implementation milestones
+Report the current repository checks: 125 automated tests passed, including 9 offline validator tests; TypeScript, targeted ESLint, Prisma schema validation, Prisma Client generation, production build, and `git diff --check` passed. The current Redis integration was not rerun because the local service had no listener; a previous two-instance run used in-memory persistence and does not establish PostgreSQL behavior. No PostgreSQL integration test or migration was run.
 
-1. Resolve Hocuspocus persistence-failure reporting without detached rejections; keep the operational gate closed until reviewed.
-2. After explicit migration approval and verification, run database persistence, reconnect/restart, and two-client synchronization tests before considering activation.
-3. Implement version snapshot/restore, cursor presence, rate limiting, and database-backed automated tests.
+## 7:15–8:30 | Remaining verification
 
-## 9:15-10:00 | Deployment and close
+The version-history migration is unapplied. The dedicated Neon test branch/database and empty public schema are confirmed read-only, but PostgreSQL history persistence remains unverified. The hosted WebSocket service, two real browsers, and performance behavior also remain unverified. Keep production collaboration disabled until those checks pass.
 
-Explain Node 20.19+ recommendation, secret-managed `DATABASE_URL`, `npm run db:migrate:deploy`, HTTPS secure cookies, PostgreSQL backups, and the single-instance limitation. For a live demonstration, obtain approval to use a local PostgreSQL database, create an empty test database, copy `.env.example` to `.env` and configure its connection string, run `npm ci`, `npm run db:generate`, and `npm run db:migrate:deploy`, then start `npm run dev`. Register a test account, create a workspace and document, edit and wait for the saved status, refresh to verify persistence, then try comments, member lists, search, recent documents, access, and the history-unavailable dialog. A second test user and membership require a separately approved provisioning method because invites are not implemented. Reiterate that document bodies persist over HTTP but simultaneous editing is not available yet.
+## 8:30–9:30 | Engineering reflection
+
+Use the individual reflection file to discuss your actual experience: which design trade-off was hardest, how authorization and revision checks shaped the implementation, what a test exposed, and what you would improve. Do not present invented personal experience.
+
+## 9:30–10:00 | Close
+
+Summarize the delivered application workflows, security model, collaboration groundwork, and exact next verification steps. Do not claim a deployed demo or completed production scaling until those external systems have been tested.

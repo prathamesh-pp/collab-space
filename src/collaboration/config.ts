@@ -4,6 +4,8 @@ export type CollaborationServerConfig = {
   port: number;
   address: string;
   allowedOrigins: ReadonlySet<string>;
+  redisUrl: string | null;
+  redisRequired: boolean;
 };
 
 export function loadCollaborationServerConfig(
@@ -64,10 +66,36 @@ export function loadCollaborationServerConfig(
     allowedOrigins.add(origin);
   }
 
+  const redisUrl = env.COLLABORATION_REDIS_URL?.trim() || null;
+  if (redisUrl) {
+    let parsed: URL;
+    try {
+      parsed = new URL(redisUrl);
+    } catch {
+      throw new Error("COLLABORATION_REDIS_URL must be a valid Redis URL.");
+    }
+    if ((parsed.protocol !== "redis:" && parsed.protocol !== "rediss:") || !parsed.hostname) {
+      throw new Error("COLLABORATION_REDIS_URL must use redis:// or rediss://.");
+    }
+    const localRedisHost = ["localhost", "127.0.0.1", "::1"].includes(parsed.hostname);
+    if (parsed.protocol === "redis:" && !localRedisHost) {
+      throw new Error("Remote collaboration Redis must use a TLS rediss:// URL.");
+    }
+  }
+
+  const redisRequiredValue = env.COLLABORATION_REDIS_REQUIRED;
+  if (redisRequiredValue !== undefined && redisRequiredValue !== "true" && redisRequiredValue !== "false") {
+    throw new Error("COLLABORATION_REDIS_REQUIRED must be true or false.");
+  }
+  const redisRequired = redisRequiredValue === "true";
+  if (redisRequired && !redisUrl) {
+    throw new Error("COLLABORATION_REDIS_URL is required when Redis coordination is required.");
+  }
+
   const address = env.COLLABORATION_HOST?.trim() || "127.0.0.1";
   if (address !== "localhost" && isIP(address) === 0) {
     throw new Error("COLLABORATION_HOST must be localhost or an IP address.");
   }
 
-  return { port, address, allowedOrigins };
+  return { port, address, allowedOrigins, redisUrl, redisRequired };
 }

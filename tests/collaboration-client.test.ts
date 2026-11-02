@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { Doc } from "yjs";
+import { Awareness } from "y-protocols/awareness";
 import {
   createCollaborationClient,
   requestCollaborationTicket,
@@ -83,7 +84,12 @@ test("collaboration provider configuration requests a fresh in-memory ticket per
       createDocument: () => document,
       createProvider: (providerConfiguration) => {
         configuration = providerConfiguration;
-        return { destroy: () => { providerDestroyed = true; } };
+        const awareness = new Awareness(document);
+        return {
+          awareness,
+          disconnect() {},
+          destroy: () => { providerDestroyed = true; awareness.destroy(); },
+        };
       },
       fetcher: async () => {
         requestCount += 1;
@@ -115,17 +121,23 @@ test("collaboration provider configuration requests a fresh in-memory ticket per
 
 test("collaborative extensions use the shared fragment and disable StarterKit history", () => {
   const document = new Doc();
-  const provider = { destroy() {} };
-  const extensions = createCollaborativeEditorExtensions(provider, document);
+  const awareness = new Awareness(document);
+  const provider = { awareness, disconnect() {}, destroy() {} };
+  const extensions = createCollaborativeEditorExtensions(provider, document, { id: "user-1", name: "Ada Lovelace" });
   const collaboration = extensions.find(
     (extension) => extension.name === "collaboration",
   );
+  const caret = extensions.find((extension) => extension.name === "collaborationCaret");
 
   assert.ok(collaboration);
   assert.ok("field" in collaboration.options);
   assert.equal(collaboration.options.field, COLLABORATION_FRAGMENT);
   assert.ok("undoRedo" in extensions[0].options);
   assert.equal(extensions[0].options.undoRedo, false);
+  assert.ok(caret);
+  assert.ok("user" in caret.options);
+  assert.equal(caret.options.user.name, "Ada Lovelace");
+  awareness.destroy();
   document.destroy();
 });
 
@@ -182,6 +194,7 @@ test("ticket request is same-origin, non-cacheable, and does not expose server e
 test("provider authentication failure callback is forwarded without ticket details", () => {
   let configuration: CollaborationProviderConfiguration | undefined;
   let failed = 0;
+  let disconnected = 0;
   const document = new Doc();
   const client = createCollaborationClient(
     {
@@ -199,7 +212,12 @@ test("provider authentication failure callback is forwarded without ticket detai
       createDocument: () => document,
       createProvider: (providerConfiguration) => {
         configuration = providerConfiguration;
-        return { destroy() {} };
+        const awareness = new Awareness(document);
+        return {
+          awareness,
+          disconnect() { disconnected += 1; },
+          destroy() { awareness.destroy(); },
+        };
       },
       fetcher: async () => Response.json({ ticket: ticketOne }),
     },
@@ -207,5 +225,6 @@ test("provider authentication failure callback is forwarded without ticket detai
 
   configuration?.onAuthenticationFailed();
   assert.equal(failed, 1);
+  assert.equal(disconnected, 1);
   client.destroy();
 });

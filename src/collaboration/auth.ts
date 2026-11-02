@@ -3,6 +3,9 @@ import type { Configuration } from "@hocuspocus/server";
 export type ConsumedCollaborationTicket = {
   documentId: string;
   userId: string;
+  userName: string;
+  sessionId: string;
+  workspaceId: string;
   role: "OWNER" | "EDITOR";
 };
 
@@ -12,6 +15,9 @@ type TicketConsumer = (
 ) => Promise<{
   documentId: string;
   userId: string;
+  userName: string;
+  sessionId: string;
+  workspaceId: string;
   role: string;
 } | null>;
 
@@ -48,7 +54,14 @@ export function createCollaborationAuthenticateHook(
     }
 
     connectionConfig.readOnly = false;
-    return { userId: access.userId, role: access.role };
+    return {
+      documentId: access.documentId,
+      userId: access.userId,
+      userName: access.userName,
+      sessionId: access.sessionId,
+      workspaceId: access.workspaceId,
+      role: access.role,
+    };
   };
 }
 
@@ -92,6 +105,9 @@ export async function authenticateCollaborationConnection(
   return {
     documentId: access.documentId,
     userId: access.userId,
+    userName: access.userName,
+    sessionId: access.sessionId,
+    workspaceId: access.workspaceId,
     role: access.role,
   };
 }

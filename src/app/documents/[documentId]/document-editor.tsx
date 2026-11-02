@@ -45,6 +45,12 @@ import { closeDialogOnEscape } from "@/lib/dialog-accessibility";
 import { createCollaborationClient } from "@/collaboration/client";
 import { createCollaborativeEditorExtensions } from "@/collaboration/editor-extensions";
 import {
+  getPresenceColor,
+  getPresenceInitials,
+  getRemotePresenceUsers,
+  type RemotePresenceUser,
+} from "@/collaboration/presence-identity";
+import {
   isClientCollaborationConfigured,
   selectDocumentEditorMode,
 } from "@/collaboration/feature-flag";
@@ -56,6 +62,7 @@ type DocumentData = {
   content: JSONContent | null;
   contentRevision: number;
   contentStateVersion: string | null;
+  currentUser: { id: string; name: string };
   workspace: { id: string; name: string };
 };
 
@@ -384,15 +391,18 @@ type CollaborationClient = ReturnType<typeof createCollaborationClient>;
 
 function SyncedCollaborativeEditor({
   client,
+  currentUser,
 }: {
   client: CollaborationClient;
+  currentUser: { id: string; name: string };
 }) {
   const extensions = useMemo(
     () => createCollaborativeEditorExtensions(
       client.provider,
       client.document,
+      currentUser,
     ),
-    [client],
+    [client, currentUser],
   );
   const editor = useEditor({
     extensions,
@@ -411,10 +421,89 @@ function SyncedCollaborativeEditor({
   );
 }
 
+function CollaboratorPresence({
+  client,
+  currentUser,
+  phase,
+}: {
+  client: CollaborationClient | null;
+  currentUser: { id: string; name: string };
+  phase: CollaborationPhase;
+}) {
+  const [collaborators, setCollaborators] = useState<RemotePresenceUser[]>([]);
+  const awareness = client?.provider.awareness;
+  const ownClientId = client?.document.clientID;
+
+  useEffect(() => {
+    if (!awareness || ownClientId === undefined) {
+      return;
+    }
+    const refresh = () => {
+      setCollaborators(getRemotePresenceUsers(awareness.getStates(), ownClientId));
+    };
+    awareness.on("update", refresh);
+    const frame = window.requestAnimationFrame(refresh);
+    return () => {
+      awareness.off("update", refresh);
+      window.cancelAnimationFrame(frame);
+    };
+  }, [awareness, ownClientId]);
+
+  const visibleCollaborators = phase === "synced" ? collaborators : [];
+  const presenceMessage = phase === "synced"
+    ? visibleCollaborators.length === 0
+      ? "Just you"
+      : `${visibleCollaborators.length} other${visibleCollaborators.length === 1 ? "" : "s"} online`
+    : phase === "reconnecting"
+      ? "Reconnecting presence"
+      : phase === "authentication-failed" || phase === "error"
+        ? "Presence unavailable"
+        : "Connecting presence";
+
+  return (
+    <div className="flex min-h-12 flex-wrap items-center gap-3 border-t border-slate-100 bg-slate-50/70 px-4 py-2.5 sm:px-5">
+      <div className="flex -space-x-2" role="group" aria-label="Collaborators">
+        <span
+          className="collabry-avatar"
+          role="img"
+          style={{ backgroundColor: getPresenceColor(currentUser.id) }}
+          title={`${currentUser.name} (you)`}
+          aria-label={`${currentUser.name} (you)`}
+        >
+          {getPresenceInitials(currentUser.name)}
+        </span>
+        {visibleCollaborators.slice(0, 5).map((collaborator) => (
+          <span
+            key={collaborator.clientId}
+            className="collabry-avatar"
+            role="img"
+            style={{ backgroundColor: collaborator.color }}
+            title={collaborator.name}
+            aria-label={`${collaborator.name}, online`}
+          >
+            {getPresenceInitials(collaborator.name)}
+          </span>
+        ))}
+        {visibleCollaborators.length > 5 && (
+          <span className="collabry-avatar collabry-avatar-overflow" role="img" aria-label={`${visibleCollaborators.length - 5} more collaborators`}>
+            +{visibleCollaborators.length - 5}
+          </span>
+        )}
+      </div>
+      <p role="status" aria-live="polite" className="text-xs font-medium text-slate-600">
+        <span className={`mr-2 inline-block h-2 w-2 rounded-full ${phase === "synced" ? "bg-emerald-500" : "bg-amber-400"}`} aria-hidden="true" />
+        {presenceMessage}
+      </p>
+    </div>
+  );
+}
+
 function CollaborativeRichTextEditor({
   documentId,
+  currentUser,
 }: {
   documentId: string;
+  currentUser: { id: string; name: string };
 }) {
   const [attempt, setAttempt] = useState(0);
   const [client, setClient] = useState<CollaborationClient | null>(null);
@@ -486,8 +575,9 @@ function CollaborativeRichTextEditor({
   return (
     <>
       {visiblePhase === "synced" && client && (
-        <SyncedCollaborativeEditor client={client} />
+        <SyncedCollaborativeEditor client={client} currentUser={currentUser} />
       )}
+      <CollaboratorPresence client={client} currentUser={currentUser} phase={visiblePhase} />
       <div className="border-t border-slate-100 px-4 py-3 text-xs text-slate-600">
         <p role={visiblePhase === "authentication-failed" || visiblePhase === "error" ? "alert" : "status"} aria-live="polite">
           {!websocketUrl
@@ -804,13 +894,62 @@ function VersionHistoryDialog({
   open,
   onClose,
   role,
+  documentId,
+  collaborationEnabled,
 }: {
   open: boolean;
   onClose: () => void;
   role: WorkspaceRole | null;
+  documentId: string;
+  collaborationEnabled: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const canRestoreVersions = canEdit(role ?? "");
+  const canManageVersions = canRestoreVersions && !collaborationEnabled;
+  const [versions, setVersions] = useState<{ id: string; label: string; createdAt: string; user: { name: string } }[]>([]);
+  const [label, setLabel] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (!open) return;
+    let active = true;
+    void fetch(`/api/documents/${documentId}/versions`, { cache: "no-store" })
+      .then(async (response) => {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error ?? "Could not load versions.");
+        if (active) { setMessage(""); setVersions(data.versions); }
+      })
+      .catch((error: unknown) => {
+        if (active) setMessage(error instanceof Error ? error.message : "Could not load versions.");
+      });
+    return () => { active = false; };
+  }, [open, documentId]);
+
+  async function createVersion() {
+    setBusy(true); setMessage("");
+    try {
+      const response = await fetch(`/api/documents/${documentId}/versions`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label: label.trim() || "Saved version" }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Could not save version.");
+      setVersions((current) => [data.version, ...current]); setLabel("");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not save version."); }
+    finally { setBusy(false); }
+  }
+
+  async function restoreVersion(versionId: string) {
+    if (!window.confirm("Restore this version? The current saved content will be kept in history.")) return;
+    setBusy(true); setMessage("");
+    try {
+      const response = await fetch(`/api/documents/${documentId}/versions/${versionId}/restore`, { method: "POST" });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error ?? "Could not restore version.");
+      window.location.reload();
+    } catch (error) { setMessage(error instanceof Error ? error.message : "Could not restore version."); setBusy(false); }
+  }
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -860,37 +999,15 @@ function VersionHistoryDialog({
         </header>
 
         <div className="flex-1 px-5 py-6 sm:px-6 sm:py-8">
-          <div
-            role="status"
-            className="rounded-2xl border border-amber-200 bg-amber-50 p-5 sm:p-6"
-          >
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-amber-700 shadow-sm">
-                <History size={17} aria-hidden="true" />
-              </span>
-              <div>
-                <h3 className="font-semibold text-amber-950">
-                  Version history is not available yet
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-amber-900">
-                  This document currently saves TipTap JSON. The existing
-                  version storage supports binary Yjs snapshots only, so older
-                  JSON versions cannot yet be safely listed or restored.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="mt-4 rounded-xl border border-slate-200 bg-white px-4 py-3">
-            <p className="text-sm leading-6 text-slate-600">
-              Current editor autosave and revision checks continue to work
-              normally. No history entries are being created or implied.
-            </p>
-          </div>
-          <p className="mt-4 text-xs leading-5 text-slate-500">
-            {canRestoreVersions
-              ? "Restoring a version will be available to workspace owners and editors after JSON snapshot storage is implemented."
-              : "Only workspace owners and editors will be allowed to restore versions when history is implemented."}
-          </p>
+          {canManageVersions && <div className="mb-5 flex flex-wrap gap-2">
+            <label className="sr-only" htmlFor="version-label">Version label</label>
+            <input id="version-label" value={label} onChange={(event) => setLabel(event.target.value)} maxLength={120} placeholder="Version label (optional)" className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm" />
+            <button type="button" disabled={busy} onClick={() => void createVersion()} className="rounded-lg bg-indigo-700 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">Save current version</button>
+          </div>}
+          {message && <p role="alert" className="mb-4 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{message}</p>}
+          {versions.length === 0 ? <p role="status" className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-600">No saved versions yet. Save a version to create a restore point.</p> : <ul className="space-y-3">{versions.map((version) => <li key={version.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-4"><div><p className="font-semibold text-slate-800">{version.label}</p><p className="mt-1 text-xs text-slate-500">{version.user.name} · {new Date(version.createdAt).toLocaleString()}</p></div>{canManageVersions && <button type="button" disabled={busy} onClick={() => void restoreVersion(version.id)} className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50">Restore</button>}</li>)}</ul>}
+          {collaborationEnabled && canRestoreVersions && <p role="status" className="mt-4 text-xs leading-5 text-slate-600">Creating or restoring versions is paused during live collaboration so active edits cannot be replaced by stale content.</p>}
+          {!canRestoreVersions && <p className="mt-4 text-xs leading-5 text-slate-500">Only workspace owners and editors can create or restore versions.</p>}
         </div>
 
         <footer className="border-t border-slate-200 bg-white px-5 py-4 text-right sm:px-6">
@@ -1399,6 +1516,7 @@ export default function DocumentEditor({
                 <CollaborativeRichTextEditor
                   key={document.id}
                   documentId={document.id}
+                  currentUser={document.currentUser}
                 />
               ) : (
                 <RichTextEditor
@@ -1416,6 +1534,8 @@ export default function DocumentEditor({
               open={historyOpen}
               onClose={() => setHistoryOpen(false)}
               role={role}
+              documentId={document.id}
+              collaborationEnabled={editorMode === "collaborative"}
             />
             {accessOpen && (
               <DocumentAccessDialog

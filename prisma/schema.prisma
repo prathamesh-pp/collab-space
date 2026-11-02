@@ -102,7 +102,8 @@ model DocumentVersion {
   documentId String
   userId     String
   label      String
-  yState     Bytes
+  yState     Bytes?
+  content    Json?
   createdAt  DateTime @default(now())
   document   Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)

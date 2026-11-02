@@ -22,6 +22,7 @@ function makeTicket(
     id: "ticket-1",
     documentId: "document-1",
     userId: "user-1",
+    user: { name: "Ada Lovelace" },
     sessionId: "session-1",
     workspaceId: "workspace-1",
     expiresAt: new Date(now.getTime() + 30_000),
@@ -113,7 +114,14 @@ test("a ticket can be consumed once and replay is rejected", async () => {
       repository,
       now,
     ),
-    { documentId: "document-1", userId: "user-1", role: "EDITOR" },
+    {
+      documentId: "document-1",
+      userId: "user-1",
+      userName: "Ada Lovelace",
+      sessionId: "session-1",
+      workspaceId: "workspace-1",
+      role: "EDITOR",
+    },
   );
   assert.equal(
     await consumeCollaborationTicketWith(
@@ -277,7 +285,14 @@ test("workspace owners and editors can collaborate while read-only roles and out
       repository.membershipRole = role;
       assert.deepEqual(
         await consumeCollaborationTicketWith(ticketToken, "document-1", repository, now),
-        { documentId: "document-1", userId: "user-1", role },
+        {
+          documentId: "document-1",
+          userId: "user-1",
+          sessionId: "session-1",
+          workspaceId: "workspace-1",
+          role,
+          userName: "Ada Lovelace",
+        },
       );
     });
   }

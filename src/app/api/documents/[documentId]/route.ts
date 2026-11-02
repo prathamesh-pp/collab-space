@@ -42,6 +42,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ doc
   return Response.json({
     document: {
       ...documentData,
+      currentUser: { id: user.id, name: user.name },
       content: yState
         ? documentContentFromYState(yState)
         : parseDocumentContent(document.content),

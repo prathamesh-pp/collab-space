@@ -4,10 +4,13 @@ import {
   type HocuspocusProviderConfiguration,
 } from "@hocuspocus/provider";
 import { Doc } from "yjs";
+import type { Awareness } from "y-protocols/awareness";
 
 const TICKET_PATTERN = /^[A-Za-z0-9_-]{43}$/;
 
 export type CollaborationProviderLifecycle = {
+  awareness: Awareness | null;
+  disconnect(): void;
   destroy(): void;
 };
 
@@ -89,8 +92,7 @@ const browserDependencies: CollaborationClientDependencies = {
         websocketProvider,
         token: configuration.token,
         onSynced: ({ state }) => configuration.onSynced(state),
-        onAuthenticationFailed: () =>
-          configuration.onAuthenticationFailed(),
+        onAuthenticationFailed: () => configuration.onAuthenticationFailed(),
       });
       provider.attach();
     } catch (error) {
@@ -103,6 +105,12 @@ const browserDependencies: CollaborationClientDependencies = {
     }
 
     return {
+      get awareness() {
+        return provider?.awareness ?? null;
+      },
+      disconnect() {
+        websocketProvider.disconnect();
+      },
       destroy() {
         try {
           provider?.destroy();
@@ -128,7 +136,8 @@ export function createCollaborationClient(
   dependencies: CollaborationClientDependencies = browserDependencies,
 ) {
   const document = dependencies.createDocument();
-  let provider: CollaborationProviderLifecycle;
+  let provider: CollaborationProviderLifecycle | null = null;
+  let authenticationFailed = false;
   try {
     provider = dependencies.createProvider({
       url,
@@ -137,8 +146,13 @@ export function createCollaborationClient(
       token: () => requestCollaborationTicket(documentId, dependencies.fetcher),
       onStatus: callbacks.onStatus,
       onSynced: callbacks.onSynced,
-      onAuthenticationFailed: callbacks.onAuthenticationFailed,
+      onAuthenticationFailed() {
+        authenticationFailed = true;
+        provider?.disconnect();
+        callbacks.onAuthenticationFailed();
+      },
     });
+    if (authenticationFailed) provider.disconnect();
   } catch (error) {
     document.destroy();
     throw error;
@@ -147,12 +161,12 @@ export function createCollaborationClient(
   let destroyed = false;
   return {
     document,
-    provider,
+      provider,
     destroy() {
       if (destroyed) return;
       destroyed = true;
       try {
-        provider.destroy();
+        provider?.destroy();
       } finally {
         document.destroy();
       }

@@ -25,9 +25,11 @@ import { loadCollaborationServerConfig } from "../src/collaboration/config";
 const documentId = "c" + "x".repeat(24);
 const allowedOrigins = new Set(["https://collab.example.test"]);
 type TestWebSocket = {
+  readyState: number;
   on(event: "open", listener: () => void): TestWebSocket;
   once(event: "message", listener: (data: Uint8Array) => void): TestWebSocket;
   once(event: "error", listener: (error: Error) => void): TestWebSocket;
+  once(event: "close", listener: () => void): TestWebSocket;
   send(data: Uint8Array): void;
   close(): void;
 };
@@ -59,7 +61,14 @@ test("authentication rejects invalid documents and origins before ticket consump
   let consumeCalls = 0;
   const consumeTicket = async () => {
     consumeCalls += 1;
-    return { documentId, userId: "user-1", role: "EDITOR" as const };
+    return {
+      documentId,
+      userId: "user-1",
+      userName: "Ada Lovelace",
+      sessionId: "session-1",
+      workspaceId: "workspace-1",
+      role: "EDITOR" as const,
+    };
   };
   const policy = { allowedOrigins, consumeTicket };
 
@@ -83,8 +92,22 @@ test("authentication rejects invalid documents and origins before ticket consump
 test("authentication rejects missing, mismatched, and non-editor ticket access", async () => {
   const outcomes = [
     null,
-    { documentId: "c" + "b".repeat(24), userId: "user-1", role: "EDITOR" as const },
-    { documentId, userId: "user-1", role: "VIEWER" },
+    {
+      documentId: "c" + "b".repeat(24),
+      userId: "user-1",
+      userName: "Ada Lovelace",
+      sessionId: "session-1",
+      workspaceId: "workspace-1",
+      role: "EDITOR" as const,
+    },
+    {
+      documentId,
+      userId: "user-1",
+      userName: "Ada Lovelace",
+      sessionId: "session-1",
+      workspaceId: "workspace-1",
+      role: "VIEWER",
+    },
   ];
   for (const outcome of outcomes) {
     assert.equal(
@@ -116,12 +139,26 @@ test("authentication accepts only an eligible ticket for the exact document", as
       allowedOrigins,
       consumeTicket: async (token, requestedDocumentId) => {
         consumed = [token, requestedDocumentId];
-        return { documentId, userId: "user-1", role: "OWNER" };
+        return {
+          documentId,
+          userId: "user-1",
+          userName: "Grace Hopper",
+          sessionId: "session-1",
+          workspaceId: "workspace-1",
+          role: "OWNER",
+        };
       },
     },
   );
   assert.deepEqual(consumed, ["opaque", documentId]);
-  assert.deepEqual(access, { documentId, userId: "user-1", role: "OWNER" });
+  assert.deepEqual(access, {
+    documentId,
+    userId: "user-1",
+    userName: "Grace Hopper",
+    sessionId: "session-1",
+    workspaceId: "workspace-1",
+    role: "OWNER",
+  });
 });
 
 test("unexpected ticket-consumption errors are sanitized and never authenticate", async () => {
@@ -184,7 +221,46 @@ test("server configuration requires a valid port, database URL, and strict origi
         "http://localhost:3000",
         "https://collab.example.test",
       ]),
+      redisUrl: null,
+      redisRequired: false,
     },
+  );
+  assert.equal(
+    loadCollaborationServerConfig({
+      COLLABORATION_PORT: "1234",
+      COLLABORATION_ALLOWED_ORIGINS: "https://collab.example.test",
+      DATABASE_URL: "postgresql://localhost/collab",
+      COLLABORATION_REDIS_URL: "rediss://redis.example.test:6380",
+      COLLABORATION_REDIS_REQUIRED: "true",
+    }).redisRequired,
+    true,
+  );
+  assert.throws(
+    () => loadCollaborationServerConfig({
+      COLLABORATION_PORT: "1234",
+      COLLABORATION_ALLOWED_ORIGINS: "https://collab.example.test",
+      DATABASE_URL: "postgresql://localhost/collab",
+      COLLABORATION_REDIS_REQUIRED: "true",
+    }),
+    /COLLABORATION_REDIS_URL/,
+  );
+  assert.throws(
+    () => loadCollaborationServerConfig({
+      COLLABORATION_PORT: "1234",
+      COLLABORATION_ALLOWED_ORIGINS: "https://collab.example.test",
+      DATABASE_URL: "postgresql://localhost/collab",
+      COLLABORATION_REDIS_URL: "redis://redis.example.test:6379",
+    }),
+    /TLS rediss/,
+  );
+  assert.throws(
+    () => loadCollaborationServerConfig({
+      COLLABORATION_PORT: "1234",
+      COLLABORATION_ALLOWED_ORIGINS: "https://collab.example.test",
+      DATABASE_URL: "postgresql://localhost/collab",
+      COLLABORATION_REDIS_URL: "https://not-redis.example.test",
+    }),
+    /COLLABORATION_REDIS_URL/,
   );
   assert.throws(
     () =>
@@ -253,6 +329,9 @@ test("real Hocuspocus connections reject origins and tickets before load or stor
       client.once("message", resolve);
       client.once("error", reject);
     });
+      const closed = client.readyState === 3
+        ? Promise.resolve()
+        : new Promise<void>((resolve) => client.once("close", resolve));
     let timeout: NodeJS.Timeout | undefined;
 
     try {
@@ -280,6 +359,7 @@ test("real Hocuspocus connections reject origins and tickets before load or stor
     } finally {
       if (timeout) clearTimeout(timeout);
       client.close();
+      await closed;
     }
   }
 

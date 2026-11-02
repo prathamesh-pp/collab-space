@@ -33,6 +33,46 @@ export async function revokeSession(token: string) {
   await prisma.session.deleteMany({ where: { tokenHash: hashToken(token) } });
 }
 
+export async function isCollaborationConnectionAuthorized({
+  documentId,
+  userId,
+  sessionId,
+  workspaceId,
+}: {
+  documentId: string;
+  userId: string;
+  sessionId: string;
+  workspaceId: string;
+}) {
+  const session = await prisma.session.findFirst({
+    where: {
+      id: sessionId,
+      userId,
+      expiresAt: { gt: new Date() },
+      collaborationTickets: {
+        some: {
+          documentId,
+          consumedAt: { not: null },
+          document: {
+            workspaceId,
+            workspace: {
+              members: {
+                some: {
+                  userId,
+                  role: { in: ["OWNER", "EDITOR"] },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    select: { id: true },
+  });
+
+  return session !== null;
+}
+
 export async function createCollaborationTicket(
   sessionId: string,
   documentId: string,
@@ -84,6 +124,7 @@ export async function consumeCollaborationTicket(
                   id: true,
                   documentId: true,
                   userId: true,
+                  user: { select: { name: true } },
                   sessionId: true,
                   expiresAt: true,
                   consumedAt: true,

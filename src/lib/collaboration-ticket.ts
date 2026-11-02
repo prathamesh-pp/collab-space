@@ -15,6 +15,7 @@ export type CollaborationTicketRecord = {
     userId: string;
     expiresAt: Date;
   } | null;
+  user: { name: string };
   role?: string | null;
 };
 
@@ -42,7 +43,14 @@ export function authorizeCollaborationTicket(
   ticket: CollaborationTicketRecord,
   requestedDocumentId: string,
   now: Date,
-): { documentId: string; userId: string; role: "OWNER" | "EDITOR" } | null {
+): {
+  documentId: string;
+  userId: string;
+  userName: string;
+  sessionId: string;
+  workspaceId: string;
+  role: "OWNER" | "EDITOR";
+} | null {
   const role = ticket.role ?? "";
   if (
     ticket.consumedAt ||
@@ -61,6 +69,9 @@ export function authorizeCollaborationTicket(
   return {
     documentId: ticket.documentId,
     userId: ticket.userId,
+    userName: ticket.user.name,
+    sessionId: ticket.sessionId,
+    workspaceId: ticket.workspaceId,
     role,
   };
 }
@@ -101,7 +112,7 @@ export async function consumeCollaborationTicketWith(
         ticket.sessionId,
         now,
       );
-      return consumed ? access : null;
+  return consumed ? access : null;
     });
   } catch (error) {
     if (

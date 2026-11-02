@@ -118,6 +118,50 @@ input {
   pointer-events: none;
 }
 
+.collabry-cursor {
+  position: relative;
+  border-left: 2px solid;
+  margin-inline: -1px;
+  pointer-events: none;
+}
+
+.collabry-cursor-label {
+  position: absolute;
+  z-index: 2;
+  top: -1.45rem;
+  left: -2px;
+  border-radius: 0.35rem 0.35rem 0.35rem 0;
+  padding: 0.12rem 0.38rem;
+  color: #fff;
+  font: 600 0.68rem/1.2 ui-sans-serif, system-ui, sans-serif;
+  white-space: nowrap;
+}
+
+.collabry-selection {
+  border-radius: 0.12rem;
+}
+
+.collabry-avatar {
+  display: inline-flex;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  border-radius: 9999px;
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 18%);
+}
+
+.collabry-avatar-overflow {
+  background: #475569;
+  font-size: 0.6rem;
+}
+
 .landing-page {
   background-color: #f5f6f3;
   background-image:
